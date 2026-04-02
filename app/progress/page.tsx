@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useDevAuth } from "../../src/components/dev-auth-provider";
 import { useLanguage } from "../../src/components/language-provider";
+import { useRuntimeAuth } from "../../src/components/runtime-auth-provider";
 
 type ProgressPayload = {
   average_score: number;
@@ -18,7 +18,7 @@ type ProgressPayload = {
 };
 
 export default function ProgressPage() {
-  const { currentUser } = useDevAuth();
+  const { currentUser } = useRuntimeAuth();
   const { language, t, labelForStage, labelForState, translateRecommendation, translateServerText } = useLanguage();
   const [progress, setProgress] = useState<ProgressPayload | null>(null);
   const [error, setError] = useState("");

@@ -7,6 +7,7 @@ import type {
   User
 } from "../../contracts";
 import type {
+  AuthProfileInput,
   NewAttempt,
   NewDriftEvent,
   NewProgressSnapshot,
@@ -61,6 +62,10 @@ export class ResilientRepository implements Repository {
 
   createSession(input: NewSession): Promise<Session> {
     return this.run("createSession", () => this.primary.createSession(input), () => this.fallback.createSession(input));
+  }
+
+  ensureUserProfile(profile: AuthProfileInput): Promise<User> {
+    return this.run("ensureUserProfile", () => this.primary.ensureUserProfile(profile), () => this.fallback.ensureUserProfile(profile));
   }
 
   updateSession(session: Session): Promise<Session> {

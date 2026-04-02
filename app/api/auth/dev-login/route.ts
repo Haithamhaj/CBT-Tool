@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAppRepository } from "../../../../src/lib/app/repository-provider";
-import { SESSION_COOKIE } from "../../../../src/lib/app/runtime-auth";
+import { DEV_SESSION_COOKIE } from "../../../../src/lib/auth/constants";
+import { isSupabaseConfigured } from "../../../../src/lib/supabase/env";
 
 export async function POST(request: NextRequest) {
+  if (isSupabaseConfigured()) {
+    return NextResponse.json({ error: "Development fallback login is disabled when Supabase Auth is configured." }, { status: 400 });
+  }
+
   const body = (await request.json()) as { email?: string };
   const email = body.email?.trim().toLowerCase();
 
@@ -26,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
   });
 
-  response.cookies.set(SESSION_COOKIE, user.id, {
+  response.cookies.set(DEV_SESSION_COOKIE, user.id, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

@@ -1,6 +1,6 @@
 import "./globals.css";
-import { DevAuthProvider } from "../src/components/dev-auth-provider";
 import { LanguageProvider } from "../src/components/language-provider";
+import { RuntimeAuthProvider } from "../src/components/runtime-auth-provider";
 import { NavShell } from "../src/components/nav-shell";
 import { getCurrentSessionUser } from "../src/lib/app/runtime-auth";
 import { getCurrentLanguage } from "../src/lib/app/runtime-language";
@@ -20,9 +20,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <LanguageProvider initialLanguage={language}>
           {currentUser ? (
-            <DevAuthProvider currentUser={currentUser}>
+            <RuntimeAuthProvider currentUser={currentUser}>
               <NavShell>{children}</NavShell>
-            </DevAuthProvider>
+            </RuntimeAuthProvider>
           ) : (
             children
           )}

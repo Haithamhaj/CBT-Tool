@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useDevAuth } from "./dev-auth-provider";
+import { useRuntimeAuth } from "./runtime-auth-provider";
 import { useLanguage } from "./language-provider";
 
 export function NavShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { currentUser } = useDevAuth();
+  const { currentUser } = useRuntimeAuth();
   const { language, setLanguage, t } = useLanguage();
 
   const navItems = [

@@ -1,26 +1,45 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { DEV_SESSION_COOKIE } from "./src/lib/auth/constants";
+import { createSupabaseMiddlewareClient } from "./src/lib/supabase/server";
+import { isSupabaseConfigured } from "./src/lib/supabase/env";
 
-const SESSION_COOKIE = "cbt_session_user_id";
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  if (
+function isPublicPath(pathname: string) {
+  return (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
-    pathname.startsWith("/api/auth/login") ||
-    pathname === "/login"
-  ) {
+    pathname === "/login" ||
+    pathname.startsWith("/auth/callback") ||
+    pathname.startsWith("/api/auth/")
+  );
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
-  const hasSession = Boolean(request.cookies.get(SESSION_COOKIE)?.value);
-  if (!hasSession) {
+  if (!isSupabaseConfigured()) {
+    const hasDevSession = Boolean(request.cookies.get(DEV_SESSION_COOKIE)?.value);
+    if (!hasDevSession) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.next({ request });
+  const supabase = createSupabaseMiddlewareClient(request, response);
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

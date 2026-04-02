@@ -15,6 +15,7 @@ function createFailingRepository(): Repository {
   };
 
   return {
+    ensureUserProfile: fail,
     createSession: fail,
     updateSession: fail,
     getSession: fail,

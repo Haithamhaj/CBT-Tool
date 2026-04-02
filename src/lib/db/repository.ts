@@ -24,8 +24,14 @@ export type NewDriftEvent = Omit<
   "id" | "session_id" | "attempt_id" | "created_at" | "corrected_at" | "status"
 >;
 export type NewProgressSnapshot = Omit<ProgressSnapshot, "id">;
+export type AuthProfileInput = {
+  id: string;
+  email: string;
+  name: string;
+};
 
 export interface Repository {
+  ensureUserProfile(profile: AuthProfileInput): Promise<User>;
   createSession(input: NewSession): Promise<Session>;
   updateSession(session: Session): Promise<Session>;
   getSession(sessionId: string): Promise<Session | undefined>;

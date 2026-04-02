@@ -3,6 +3,7 @@ import usersSeed from "../../../data/seeds/users.json";
 import type { Attempt, Case, DriftEvent, ScoreOutput, Session, User } from "../../contracts";
 import { caseSchema, userSchema } from "../../contracts";
 import type {
+  AuthProfileInput,
   NewAttempt,
   NewDriftEvent,
   NewProgressSnapshot,
@@ -40,6 +41,27 @@ export class InMemoryRepository implements Repository {
       driftEvents: seed?.driftEvents ?? [],
       progressSnapshots: seed?.progressSnapshots ?? []
     };
+  }
+
+  async ensureUserProfile(profile: AuthProfileInput): Promise<User> {
+    const existingIndex = this.store.users.findIndex((user) => user.id === profile.id);
+    const existing = existingIndex >= 0 ? this.store.users[existingIndex] : undefined;
+    if (existing) {
+      const updated = { ...existing, email: profile.email };
+      this.store.users[existingIndex] = updated;
+      return updated;
+    }
+
+    const created = userSchema.parse({
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      role: "trainee",
+      level: "beginner",
+      facilitator_id: null
+    });
+    this.store.users.push(created);
+    return created;
   }
 
   async createSession(input: NewSession): Promise<Session> {

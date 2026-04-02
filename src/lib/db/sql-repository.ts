@@ -16,6 +16,7 @@ import {
   userSchema
 } from "../../contracts";
 import type {
+  AuthProfileInput,
   NewAttempt,
   NewDriftEvent,
   NewProgressSnapshot,
@@ -114,6 +115,19 @@ function mapProgress(row: Record<string, unknown>): ProgressSnapshot {
 
 export class SqlRepository implements Repository {
   constructor(private readonly db: Queryable) {}
+
+  async ensureUserProfile(profile: AuthProfileInput): Promise<User> {
+    const result = await this.db.query(
+      `insert into users (id, email, name, role, level, facilitator_id)
+       values ($1, $2, $3, 'trainee', 'beginner', null)
+       on conflict (id) do update
+         set email = excluded.email
+       returning *`,
+      [profile.id, profile.email, profile.name]
+    );
+
+    return mapUser(result.rows[0] as Record<string, unknown>);
+  }
 
   async createSession(input: NewSession): Promise<Session> {
     const id = randomId();

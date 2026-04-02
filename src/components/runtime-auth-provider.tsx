@@ -16,7 +16,7 @@ type RuntimeAuthContextValue = {
 
 const RuntimeAuthContext = createContext<RuntimeAuthContextValue | null>(null);
 
-export function DevAuthProvider({
+export function RuntimeAuthProvider({
   children,
   currentUser
 }: {
@@ -30,10 +30,10 @@ export function DevAuthProvider({
   );
 }
 
-export function useDevAuth() {
+export function useRuntimeAuth() {
   const context = useContext(RuntimeAuthContext);
   if (!context) {
-    throw new Error("useDevAuth must be used inside DevAuthProvider");
+    throw new Error("useRuntimeAuth must be used inside RuntimeAuthProvider");
   }
   return context;
 }
