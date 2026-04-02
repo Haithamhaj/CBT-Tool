@@ -203,7 +203,8 @@ export class PracticeService {
       selectedTool: session.selected_tool,
       summaryText: request.input_payload.summary_text,
       homeworkText: request.input_payload.homework_text,
-      caseRecord
+      caseRecord,
+      language: request.language ?? "en"
     });
 
     const attempt = await this.repo.createAttempt({

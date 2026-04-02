@@ -58,4 +58,17 @@ describe("rules engine", () => {
     expect(result.rule_hits).toContain("DR012");
     expect(result.passed).toBe(false);
   });
+
+  it("does not flag DR008 for Arabic homework that matches the selected tool", () => {
+    const result = validateSummaryAndHomework({
+      caseRecord: parsedCases[2],
+      selectedTool: "thought_record",
+      summaryText: "لخصنا الفكرة التلقائية التي تظهر قبل الاجتماع.",
+      homeworkText: "املأ سجل الأفكار بعد كل موقف يثير القلق وسجّل الفكرة التلقائية والمشاعر.",
+      language: "ar"
+    });
+
+    expect(result.rule_hits).not.toContain("DR008");
+    expect(result.passed).toBe(true);
+  });
 });

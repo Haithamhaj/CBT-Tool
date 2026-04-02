@@ -1,4 +1,5 @@
 import type { Case, DriftSeverity, ToolId, TrainingStage, ValidationOutput } from "../../contracts";
+import type { AppLanguage } from "../i18n/shared";
 import { driftTaxonomy } from "../config/drift-taxonomy";
 import { getStageToolEntry } from "../config/stage-tool-matrix";
 
@@ -23,6 +24,7 @@ export type SummaryHomeworkInput = {
   summaryText?: string;
   homeworkText?: string;
   caseRecord: Case;
+  language?: AppLanguage;
 };
 
 export type RuleEvaluationResult = ValidationOutput & {
@@ -116,24 +118,36 @@ export function validateSessionSetup(input: SetupValidationInput): RuleEvaluatio
   };
 }
 
-function homeworkMatchesTool(tool: ToolId, homeworkText?: string): boolean {
+function homeworkMatchesTool(tool: ToolId, homeworkText?: string, language: AppLanguage = "en"): boolean {
   if (!homeworkText) {
     return false;
   }
 
   const normalized = homeworkText.toLowerCase();
-  const expectedKeywords: Record<ToolId, string[]> = {
-    agenda_setting: ["agenda", "goal"],
-    thought_record: ["thought", "trigger", "record"],
-    emotion_labeling: ["emotion", "feeling", "label"],
-    behavioral_activation: ["activity", "schedule", "task"],
-    cognitive_restructuring: ["alternative thought", "evidence", "restructure"],
-    core_belief_work: ["belief", "assumption", "core belief"],
-    homework_planning: ["practice", "task", "plan"],
-    session_summary: ["summary", "review"]
+  const expectedKeywords: Record<AppLanguage, Record<ToolId, string[]>> = {
+    en: {
+      agenda_setting: ["agenda", "goal"],
+      thought_record: ["thought", "trigger", "record", "automatic thought", "log"],
+      emotion_labeling: ["emotion", "feeling", "label"],
+      behavioral_activation: ["activity", "schedule", "task"],
+      cognitive_restructuring: ["alternative thought", "evidence", "restructure"],
+      core_belief_work: ["belief", "assumption", "core belief"],
+      homework_planning: ["practice", "task", "plan"],
+      session_summary: ["summary", "review"]
+    },
+    ar: {
+      agenda_setting: ["أجندة", "هدف"],
+      thought_record: ["فكرة", "الأفكار", "موقف", "سجل", "رصد", "تلقائية"],
+      emotion_labeling: ["مشاعر", "شعور", "انفعال", "سم", "تسمية"],
+      behavioral_activation: ["نشاط", "جدول", "مهمة", "ممارسة"],
+      cognitive_restructuring: ["فكرة بديلة", "الأدلة", "دليل", "إعادة", "إعادة صياغة"],
+      core_belief_work: ["معتقد", "افتراض", "معتقد جوهري"],
+      homework_planning: ["خطة", "واجب", "ممارسة", "مهمة"],
+      session_summary: ["ملخص", "مراجعة"]
+    }
   };
 
-  return expectedKeywords[tool].some((keyword) => normalized.includes(keyword));
+  return expectedKeywords[language][tool].some((keyword) => normalized.includes(keyword.toLowerCase()));
 }
 
 export function validateSummaryAndHomework(input: SummaryHomeworkInput): RuleEvaluationResult {
@@ -154,7 +168,7 @@ export function validateSummaryAndHomework(input: SummaryHomeworkInput): RuleEva
     ruleHits.push("DR002");
   }
 
-  if (!homeworkMatchesTool(input.selectedTool, input.homeworkText)) {
+  if (!homeworkMatchesTool(input.selectedTool, input.homeworkText, input.language ?? "en")) {
     const drift = createRuleDrift("DR008");
     drifts.push(drift);
     blockingErrors.push("Homework does not align with the selected tool.");
