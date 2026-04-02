@@ -5,6 +5,7 @@ import {
   sessionStartRequestSchema,
   stepSubmissionRequestSchema
 } from "../../contracts";
+import { ZodError } from "zod";
 import type { Repository } from "../db/repository";
 import { InMemoryRepository } from "../db/in-memory-repository";
 import { PracticeService } from "../services/practice-service";
@@ -45,6 +46,9 @@ export function buildHandlers(repo: Repository = new InMemoryRepository()) {
         const request = stepSubmissionRequestSchema.parse(payload);
         return { status: 200, body: await practiceService.submitStep(request) };
       } catch (error) {
+        if (error instanceof ZodError) {
+          return { status: 400, body: { error: "Unable to submit step." } };
+        }
         return { status: 400, body: { error: error instanceof Error ? error.message : "Unknown error" } };
       }
     },

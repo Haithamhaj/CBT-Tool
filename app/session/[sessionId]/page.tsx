@@ -85,12 +85,10 @@ export default function SessionPage() {
         ? {
             text: summaryText || "summary",
             summary_text: summaryText,
-            homework_text: homeworkText,
-            language
+            homework_text: homeworkText
           }
         : {
-            text,
-            language
+            text
           };
 
     const response = await fetch("/api/practice/step", {
@@ -99,7 +97,8 @@ export default function SessionPage() {
       body: JSON.stringify({
         session_id: params.sessionId,
         step_name: view.session.current_step,
-        input_payload: payload
+        input_payload: payload,
+        language
       })
     });
 

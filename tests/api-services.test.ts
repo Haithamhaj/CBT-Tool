@@ -124,4 +124,22 @@ describe("backend service and API layer", () => {
     expect(response.status).toBe(400);
     expect("error" in response.body && response.body.error).toContain("Forbidden");
   });
+
+  it("returns a user-safe step submission error when input_payload shape is invalid", async () => {
+    const handlers = buildHandlers(new InMemoryRepository());
+
+    const response = await handlers.stepSubmit({
+      actor_user_id: "22222222-2222-2222-2222-222222222222",
+      actor_role: "trainee",
+      session_id: "session-id",
+      step_name: "guided_input",
+      input_payload: {
+        text: "Valid enough guided input text for schema length handling.",
+        language: "ar"
+      }
+    });
+
+    expect(response.status).toBe(400);
+    expect("error" in response.body && response.body.error).toBe("Unable to submit step.");
+  });
 });
