@@ -57,6 +57,17 @@ export class InMemoryRepository implements Repository {
     );
     const legacyEmailMatch = legacyEmailIndex >= 0 ? this.store.users[legacyEmailIndex] : undefined;
     if (legacyEmailMatch) {
+      const legacyId = legacyEmailMatch.id;
+      this.store.sessions = this.store.sessions.map((session) =>
+        session.user_id === legacyId ? { ...session, user_id: profile.id } : session
+      );
+      this.store.progressSnapshots = this.store.progressSnapshots.map((snapshot) =>
+        snapshot.user_id === legacyId ? { ...snapshot, user_id: profile.id } : snapshot
+      );
+      this.store.users = this.store.users.map((user) =>
+        user.facilitator_id === legacyId ? { ...user, facilitator_id: profile.id } : user
+      );
+
       const merged = userSchema.parse({
         ...legacyEmailMatch,
         id: profile.id,

@@ -117,31 +117,57 @@ export class SqlRepository implements Repository {
   constructor(private readonly db: Queryable) {}
 
   async ensureUserProfile(profile: AuthProfileInput): Promise<User> {
-    const result = await this.db.query(
-      `with legacy_email_match as (
-         update users
-            set id = $1,
-                email = $2,
-                name = $3,
+    const legacyResult = await this.db.query(
+      `select * from users where lower(email) = lower($1) and id <> $2 limit 1`,
+      [profile.email, profile.id]
+    );
+
+    if (legacyResult.rows[0]) {
+      const legacy = legacyResult.rows[0] as Record<string, unknown>;
+      const legacyId = String(legacy.id);
+
+      await this.db.query(
+        `update users
+            set email = concat('__legacy__', id::text, '__', email),
                 updated_at = current_timestamp
-          where lower(email) = lower($2)
-            and id <> $1
-        returning *
-       ),
-       upsert_by_id as (
-         insert into users (id, email, name, role, level, facilitator_id)
-         select $1, $2, $3, 'trainee', 'beginner', null
-         where not exists (select 1 from legacy_email_match)
+          where id = $1`,
+        [legacyId]
+      );
+
+      const inserted = await this.db.query(
+        `insert into users (id, email, name, role, level, facilitator_id)
+         values ($1, $2, $3, $4, $5, $6)
          on conflict (id) do update
            set email = excluded.email,
                name = excluded.name,
                updated_at = current_timestamp
-         returning *
-       )
-       select * from legacy_email_match
-       union all
-       select * from upsert_by_id
-       limit 1`,
+         returning *`,
+        [
+          profile.id,
+          profile.email,
+          profile.name,
+          String(legacy.role),
+          String(legacy.level),
+          legacy.facilitator_id ?? null
+        ]
+      );
+
+      await this.db.query(`update sessions set user_id = $1 where user_id = $2`, [profile.id, legacyId]);
+      await this.db.query(`update progress_snapshots set user_id = $1 where user_id = $2`, [profile.id, legacyId]);
+      await this.db.query(`update users set facilitator_id = $1 where facilitator_id = $2`, [profile.id, legacyId]);
+      await this.db.query(`delete from users where id = $1`, [legacyId]);
+
+      return mapUser(inserted.rows[0] as Record<string, unknown>);
+    }
+
+    const result = await this.db.query(
+      `insert into users (id, email, name, role, level, facilitator_id)
+       values ($1, $2, $3, 'trainee', 'beginner', null)
+       on conflict (id) do update
+         set email = excluded.email,
+             name = excluded.name,
+             updated_at = current_timestamp
+       returning *`,
       [profile.id, profile.email, profile.name]
     );
 
