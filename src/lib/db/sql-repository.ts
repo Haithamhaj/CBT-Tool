@@ -118,11 +118,30 @@ export class SqlRepository implements Repository {
 
   async ensureUserProfile(profile: AuthProfileInput): Promise<User> {
     const result = await this.db.query(
-      `insert into users (id, email, name, role, level, facilitator_id)
-       values ($1, $2, $3, 'trainee', 'beginner', null)
-       on conflict (id) do update
-         set email = excluded.email
-       returning *`,
+      `with legacy_email_match as (
+         update users
+            set id = $1,
+                email = $2,
+                name = $3,
+                updated_at = current_timestamp
+          where lower(email) = lower($2)
+            and id <> $1
+        returning *
+       ),
+       upsert_by_id as (
+         insert into users (id, email, name, role, level, facilitator_id)
+         select $1, $2, $3, 'trainee', 'beginner', null
+         where not exists (select 1 from legacy_email_match)
+         on conflict (id) do update
+           set email = excluded.email,
+               name = excluded.name,
+               updated_at = current_timestamp
+         returning *
+       )
+       select * from legacy_email_match
+       union all
+       select * from upsert_by_id
+       limit 1`,
       [profile.id, profile.email, profile.name]
     );
 

@@ -28,6 +28,34 @@ describe("auth profile sync", () => {
     expect(user.role).toBe("trainee");
     expect(user.level).toBe("beginner");
     expect(user.email).toBe("trainee.one+updated@example.com");
-    expect(user.name).toBe("Trainee One");
+    expect(user.name).toBe("updated-name");
+  });
+
+  it("merges a legacy email match by updating the id and preserving facilitator data", async () => {
+    const repo = new InMemoryRepository({
+      users: [
+        {
+          id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          email: "haitham.haj@gmail.com",
+          name: "Haitham Legacy",
+          role: "facilitator",
+          level: "advanced",
+          facilitator_id: null
+        }
+      ]
+    });
+
+    const user = await repo.ensureUserProfile({
+      id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      email: "haitham.haj@gmail.com",
+      name: "Haitham Haj"
+    });
+
+    expect(user.id).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(user.email).toBe("haitham.haj@gmail.com");
+    expect(user.name).toBe("Haitham Haj");
+    expect(user.role).toBe("facilitator");
+    expect(user.level).toBe("advanced");
+    expect(user.facilitator_id).toBeNull();
   });
 });

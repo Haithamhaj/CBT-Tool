@@ -47,9 +47,24 @@ export class InMemoryRepository implements Repository {
     const existingIndex = this.store.users.findIndex((user) => user.id === profile.id);
     const existing = existingIndex >= 0 ? this.store.users[existingIndex] : undefined;
     if (existing) {
-      const updated = { ...existing, email: profile.email };
+      const updated = { ...existing, email: profile.email, name: profile.name };
       this.store.users[existingIndex] = updated;
       return updated;
+    }
+
+    const legacyEmailIndex = this.store.users.findIndex(
+      (user) => user.email.toLowerCase() === profile.email.toLowerCase()
+    );
+    const legacyEmailMatch = legacyEmailIndex >= 0 ? this.store.users[legacyEmailIndex] : undefined;
+    if (legacyEmailMatch) {
+      const merged = userSchema.parse({
+        ...legacyEmailMatch,
+        id: profile.id,
+        email: profile.email,
+        name: profile.name
+      });
+      this.store.users[legacyEmailIndex] = merged;
+      return merged;
     }
 
     const created = userSchema.parse({
