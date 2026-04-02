@@ -43,12 +43,22 @@ export function buildHandlers(repo: Repository = new InMemoryRepository()) {
 
     async stepSubmit(payload: unknown): Promise<ApiResponse<Awaited<ReturnType<PracticeService["submitStep"]>>>> {
       try {
+        console.info("[stepSubmit.received]", payload);
         const request = stepSubmissionRequestSchema.parse(payload);
+        console.info("[stepSubmit.parsed]", request);
         return { status: 200, body: await practiceService.submitStep(request) };
       } catch (error) {
         if (error instanceof ZodError) {
+          console.error("[stepSubmit.zodError]", {
+            payload,
+            issues: error.issues
+          });
           return { status: 400, body: { error: "Unable to submit step." } };
         }
+        console.error("[stepSubmit.error]", {
+          payload,
+          error: error instanceof Error ? error.message : error
+        });
         return { status: 400, body: { error: error instanceof Error ? error.message : "Unknown error" } };
       }
     },
