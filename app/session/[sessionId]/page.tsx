@@ -96,7 +96,7 @@ export default function SessionPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         session_id: params.sessionId,
-        step_name: view.session.current_step,
+        step_name: currentStep,
         input_payload: payload,
         language
       })
