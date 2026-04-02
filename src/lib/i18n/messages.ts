@@ -26,6 +26,7 @@ const messages = {
     devFallbackMode: "Development fallback mode",
     devFallbackHint: "This local path uses seeded users only. It is not the production login flow.",
     authCallbackFailed: "The Magic Link callback could not complete. Request a new link and try again.",
+    errorEmailRateLimit: "Too many email sign-in requests were sent. Please wait about a minute, then try again.",
     practiceSetupTitle: "Practice Setup",
     practiceSetupSubtitle: "Choose a case, match the stage and tool, then start the guided session.",
     case: "Case",
@@ -228,6 +229,7 @@ const messages = {
     devFallbackMode: "وضع التطوير المحلي",
     devFallbackHint: "هذا المسار المحلي يستخدم مستخدمين مزروعين فقط، وليس مسار الدخول الإنتاجي.",
     authCallbackFailed: "تعذر إكمال العودة من رابط الدخول. اطلب رابطًا جديدًا ثم حاول مرة أخرى.",
+    errorEmailRateLimit: "تم إرسال طلبات دخول كثيرة عبر البريد. انتظر دقيقة تقريبًا ثم حاول مرة أخرى.",
     practiceSetupTitle: "إعداد الممارسة",
     practiceSetupSubtitle: "اختر الحالة، ثم طابق المرحلة والأداة، وبعدها ابدأ الجلسة الموجّهة.",
     case: "الحالة",
@@ -485,6 +487,7 @@ const exactServerTextKeys: Record<string, keyof typeof messages.en> = {
   "Unable to start the session.": "errorUnableStartSession",
   "Unable to submit step.": "errorUnableSubmitStep",
   "No user found for that email.": "errorEmailNotFound",
+  "email rate limit exceeded": "errorEmailRateLimit",
   authCallbackFailed: "authCallbackFailed"
 };
 
