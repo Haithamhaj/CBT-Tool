@@ -14,6 +14,7 @@ const devFallbackEmails = [
   "facilitator@example.com"
 ];
 const MAGIC_LINK_COOLDOWN_SECONDS = 60;
+const MAGIC_LINK_COOLDOWN_KEY = "cbt-magic-link-cooldown-until";
 
 export default function LoginPage() {
   const { language, setLanguage, t, translateServerText } = useLanguage();
@@ -35,7 +36,29 @@ export default function LoginPage() {
   }, [language, t]);
 
   useEffect(() => {
+    if (!hasSupabaseAuth) {
+      return;
+    }
+
+    const storedUntil = window.localStorage.getItem(MAGIC_LINK_COOLDOWN_KEY);
+    if (!storedUntil) {
+      return;
+    }
+
+    const remainingMs = Number(storedUntil) - Date.now();
+    if (remainingMs <= 0) {
+      window.localStorage.removeItem(MAGIC_LINK_COOLDOWN_KEY);
+      return;
+    }
+
+    setCooldownSecondsLeft(Math.ceil(remainingMs / 1000));
+  }, []);
+
+  useEffect(() => {
     if (cooldownSecondsLeft <= 0) {
+      if (hasSupabaseAuth) {
+        window.localStorage.removeItem(MAGIC_LINK_COOLDOWN_KEY);
+      }
       return;
     }
 
@@ -81,6 +104,10 @@ export default function LoginPage() {
 
         setSuccess(t(language, "magicLinkSent"));
         setCooldownSecondsLeft(MAGIC_LINK_COOLDOWN_SECONDS);
+        window.localStorage.setItem(
+          MAGIC_LINK_COOLDOWN_KEY,
+          String(Date.now() + MAGIC_LINK_COOLDOWN_SECONDS * 1000)
+        );
         setIsLoading(false);
         return;
       }
@@ -164,6 +191,7 @@ export default function LoginPage() {
             <div className="callout callout-advisory stack">
               <strong>{t(language, "magicLinkCheckInboxTitle")}</strong>
               <div className="muted">{t(language, "magicLinkCooldownNotice", cooldownSecondsLeft)}</div>
+              <div className="muted">{t(language, "magicLinkDeliveryHelp")}</div>
             </div>
           ) : null}
 
