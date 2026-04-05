@@ -7,8 +7,8 @@ import { getCurrentLanguage } from "../src/lib/app/runtime-language";
 import { directionForLanguage } from "../src/lib/i18n/shared";
 
 export const metadata = {
-  title: "CBT MVP Shell",
-  description: "Minimal CBT training MVP shell"
+  title: "CBT Reference Hub",
+  description: "Reference-first CBT learning hub"
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

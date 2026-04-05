@@ -42,24 +42,6 @@ describe("auth profile sync", () => {
           level: "advanced",
           facilitator_id: null
         }
-      ],
-      sessions: [
-        {
-          id: "99999999-9999-4999-8999-999999999999",
-          user_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-          case_id: "case_beginner_sleep_deadlines",
-          state: "review_pending",
-          current_step: "summary_and_homework",
-          stage: "core_tools",
-          selected_tool: "thought_record",
-          session_goal: "Preserve facilitator history",
-          revision_count: 0,
-          started_at: null,
-          finished_at: null,
-          last_activity_at: "2026-04-02T00:00:00.000Z",
-          created_at: "2026-04-02T00:00:00.000Z",
-          updated_at: "2026-04-02T00:00:00.000Z"
-        }
       ]
     });
 
@@ -75,8 +57,5 @@ describe("auth profile sync", () => {
     expect(user.role).toBe("facilitator");
     expect(user.level).toBe("advanced");
     expect(user.facilitator_id).toBeNull();
-
-    const session = await repo.getSession("99999999-9999-4999-8999-999999999999");
-    expect(session?.user_id).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
   });
 });

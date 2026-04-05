@@ -16,22 +16,9 @@ function createFailingRepository(): Repository {
 
   return {
     ensureUserProfile: fail,
-    createSession: fail,
-    updateSession: fail,
-    getSession: fail,
-    getCase: fail,
     getUser: fail,
-    getUserByEmail: fail,
-    listSessionsByUser: fail,
-    createAttempt: fail,
-    updateAttempt: fail,
-    listAttemptsBySession: fail,
-    createDriftEvents: fail,
-    listDriftEventsBySession: fail,
-    addProgressSnapshot: fail,
-    listProgressSnapshotsByUser: fail,
-    latestScoreForSession: fail
-  } as Repository;
+    getUserByEmail: fail
+  };
 }
 
 describe("ResilientRepository", () => {
@@ -51,20 +38,9 @@ describe("ResilientRepository", () => {
     const repo = new ResilientRepository(createFailingRepository(), new InMemoryRepository());
 
     await repo.getUserByEmail("trainee.one@example.com");
-    const session = await repo.createSession({
-      user_id: "22222222-2222-2222-2222-222222222222",
-      case_id: "case-beginner-social-anxiety-1",
-      state: "draft",
-      current_step: "guided_input",
-      stage: "foundations",
-      selected_tool: "thought_record",
-      session_goal: "",
-      revision_count: 0,
-      started_at: null,
-      finished_at: null
-    });
+    const user = await repo.getUser("22222222-2222-2222-2222-222222222222");
 
-    expect(session.id).toMatch(/^session-/);
+    expect(user?.name).toBe("Trainee One");
     expect(warnSpy).toHaveBeenCalledOnce();
     warnSpy.mockRestore();
   });
