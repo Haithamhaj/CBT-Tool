@@ -2,13 +2,16 @@ import type { AppLanguage } from "./shared";
 
 export type ReferenceTabId =
   | "overview"
+  | "principles"
   | "session-structure"
-  | "five-sessions"
-  | "tools"
+  | "exploration-stage"
+  | "cognitive-model"
+  | "techniques"
   | "thinking"
   | "emotions"
   | "worksheets"
-  | "goals"
+  | "treatment-plan"
+  | "therapy-obstacles"
   | "glossary"
   | "advanced";
 
@@ -74,33 +77,39 @@ const operationalContent: Record<AppLanguage, HubOperationalContent> = {
   en: {
     tabs: [
       { id: "overview", label: "Overview" },
+      { id: "principles", label: "Ten Principles" },
       { id: "session-structure", label: "Session Structure" },
-      { id: "five-sessions", label: "Five Sessions Map" },
-      { id: "tools", label: "Tools Library" },
-      { id: "thinking", label: "Thinking & Distortions" },
+      { id: "exploration-stage", label: "Exploration Stage (5 Sessions)" },
+      { id: "cognitive-model", label: "Cognitive Model" },
+      { id: "thinking", label: "Thinking Levels & Distortions" },
       { id: "emotions", label: "Emotions" },
+      { id: "techniques", label: "Therapeutic Techniques" },
       { id: "worksheets", label: "Worksheets" },
-      { id: "goals", label: "Goals & Treatment Plan" },
+      { id: "treatment-plan", label: "Therapeutic Goals & Treatment Plan" },
+      { id: "therapy-obstacles", label: "Therapy Obstacles" },
       { id: "glossary", label: "Glossary" },
       { id: "advanced", label: "Advanced Reference" }
     ],
     quickStartTitle: "Quick Start",
     quickStartItems: [
-      { id: "new", title: "I am new", description: "Start with CBT basics, the fixed session structure, and the first-session map.", tab: "overview" },
+      { id: "new", title: "I am new", description: "Start with CBT basics, the ten principles, and the fixed session structure.", tab: "overview" },
       { id: "before", title: "I am reviewing before a session", description: "Go to the session structure and before-session checklist first.", tab: "session-structure" },
-      { id: "during", title: "I am reviewing during a session", description: "Use the tools library and the during-session checklist.", tab: "tools" },
-      { id: "after", title: "I am reviewing after a session", description: "Use homework setup, next-step planning, and worksheets.", tab: "worksheets" },
+      { id: "during", title: "I am reviewing during a session", description: "Use the techniques section and the during-session checklist.", tab: "techniques" },
+      { id: "after", title: "I am reviewing after a session", description: "Use treatment planning, homework setup, and worksheets.", tab: "treatment-plan" },
       { id: "deeper", title: "I want deeper understanding", description: "Open the advanced reference only after the core map feels clear.", tab: "advanced" }
     ],
     sectionHints: {
       overview: "Use this tab when you need the simplest grounding map before practice.",
+      principles: "Use this when you want the trainer's formal backbone of CBT, not just a general summary.",
       "session-structure": "Use this during session preparation or when the sequence feels unclear.",
-      "five-sessions": "Use this to understand the logic of early CBT exploration from session 1 to 5.",
-      tools: "Use this when you need to decide which tool fits the case and stage.",
+      "exploration-stage": "Use this to understand the logic of the five-session exploration stage.",
+      "cognitive-model": "Use this to connect the situation, thought, emotion, behavior, and deeper belief structure.",
+      techniques: "Use this when you need to decide which therapeutic technique fits the case and stage.",
       thinking: "Use this when the case is still unclear and you need better naming of thoughts or distortions.",
       emotions: "Use this when the emotion label is too broad and needs sharpening.",
       worksheets: "Use this when you need a reminder of what each sheet should contain.",
-      goals: "Use this when you need to move from problem list to treatment direction.",
+      "treatment-plan": "Use this when you need to move from the problem list toward goals and treatment direction.",
+      "therapy-obstacles": "Use this when the therapy process is stalling and you need to name what is interfering with the work.",
       glossary: "Use this when a CBT term is familiar but still fuzzy.",
       advanced: "Not the starting point. Open this only when the core reference already makes sense."
     },
@@ -212,33 +221,39 @@ const operationalContent: Record<AppLanguage, HubOperationalContent> = {
   ar: {
     tabs: [
       { id: "overview", label: "نظرة عامة" },
+      { id: "principles", label: "المبادئ العشرة" },
       { id: "session-structure", label: "بنية الجلسة" },
-      { id: "five-sessions", label: "خريطة 5 جلسات" },
-      { id: "tools", label: "مكتبة الأدوات" },
-      { id: "thinking", label: "التفكير والتشوهات" },
+      { id: "exploration-stage", label: "مرحلة الاستكشاف (5 جلسات)" },
+      { id: "cognitive-model", label: "بنية النموذج المعرفي" },
+      { id: "thinking", label: "مستويات التفكير وأخطاء التفكير" },
       { id: "emotions", label: "المشاعر" },
+      { id: "techniques", label: "الفنيات العلاجية" },
       { id: "worksheets", label: "النماذج" },
-      { id: "goals", label: "الأهداف والخطة" },
+      { id: "treatment-plan", label: "الأهداف العلاجية والخطة العلاجية" },
+      { id: "therapy-obstacles", label: "مفسدات العلاج" },
       { id: "glossary", label: "المعجم" },
       { id: "advanced", label: "المرجع المتقدم" }
     ],
     quickStartTitle: "بداية سريعة",
     quickStartItems: [
-      { id: "new", title: "أنا جديد", description: "ابدأ بأساسيات CBT، وبنية الجلسة الثابتة، وخريطة الجلسات الأولى.", tab: "overview" },
+      { id: "new", title: "أنا جديد", description: "ابدأ بأساسيات CBT، والمبادئ العشرة، وبنية الجلسة الثابتة.", tab: "overview" },
       { id: "before", title: "أراجع قبل الجلسة", description: "اذهب أولًا إلى بنية الجلسة وقائمة ما قبل الجلسة.", tab: "session-structure" },
-      { id: "during", title: "أراجع أثناء الجلسة", description: "استخدم مكتبة الأدوات وقائمة أثناء الجلسة.", tab: "tools" },
-      { id: "after", title: "أراجع بعد الجلسة", description: "ارجع إلى إعداد الواجب، والخطوة التالية، والنماذج المرجعية.", tab: "worksheets" },
+      { id: "during", title: "أراجع أثناء الجلسة", description: "استخدم الفنيات العلاجية وقائمة أثناء الجلسة.", tab: "techniques" },
+      { id: "after", title: "أراجع بعد الجلسة", description: "ارجع إلى الخطة العلاجية، والواجب، والنماذج المرجعية.", tab: "treatment-plan" },
       { id: "deeper", title: "أريد فهمًا أعمق", description: "افتح المرجع المتقدم فقط بعد أن يصبح المرجع الأساسي واضحًا.", tab: "advanced" }
     ],
     sectionHints: {
       overview: "استخدم هذا التبويب عندما تحتاج أبسط خريطة عامة قبل التدريب.",
+      principles: "استخدمه عندما تريد العمود الفقري الرسمي للمادة لا مجرد ملخص عام.",
       "session-structure": "استخدمه أثناء التحضير للجلسة أو عندما تختلط عليك البنية.",
-      "five-sessions": "استخدمه لفهم منطق الانتقال من الجلسة 1 إلى 5 في الاستكشاف المبكر.",
-      tools: "استخدمه عندما تريد أن تقرر أي أداة تناسب الحالة والمرحلة.",
+      "exploration-stage": "استخدمه لفهم منطق مرحلة الاستكشاف المكونة من خمس جلسات.",
+      "cognitive-model": "استخدمه لربط الموقف والفكرة والشعور والسلوك ببنية التفكير الأعمق.",
+      techniques: "استخدمه عندما تريد أن تقرر أي فنية علاجية تناسب الحالة والمرحلة.",
       thinking: "استخدمه عندما تكون الحالة ما زالت غير واضحة وتحتاج تسمية أدق للأفكار أو التشوهات.",
       emotions: "استخدمه عندما تكون تسمية الشعور عامة جدًا وتحتاج إلى دقة أعلى.",
       worksheets: "استخدمه عندما تحتاج تذكيرًا بما الذي يجب أن تحتويه كل ورقة.",
-      goals: "استخدمه عندما تريد الانتقال من قائمة المشكلات إلى اتجاه علاجي واضح.",
+      "treatment-plan": "استخدمه عندما تريد الانتقال من قائمة المشكلات إلى أهداف وخطة علاجية أوضح.",
+      "therapy-obstacles": "استخدمه عندما يتعطل المسار العلاجي وتحتاج تسمية ما الذي يفسد العملية العلاجية.",
       glossary: "استخدمه عندما تعرف المصطلح تقريبًا لكن معناه ما زال غير ثابت.",
       advanced: "ليس نقطة البداية. افتحه فقط بعد فهم المرجع الأساسي."
     },

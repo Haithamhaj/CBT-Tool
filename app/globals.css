@@ -868,6 +868,120 @@ html[dir="rtl"] .reference-quickstart {
   border: 1px solid rgba(15, 23, 42, 0.12);
 }
 
+.reference-layer-diagram {
+  display: grid;
+  gap: 12px;
+}
+
+.reference-layer-step {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.reference-layer-card {
+  width: min(100%, 640px);
+  padding: 18px;
+  border: 1px solid #d8dee4;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  display: grid;
+  gap: 8px;
+}
+
+.reference-layer-card p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.reference-layer-arrow {
+  font-size: 22px;
+  color: #68819a;
+  font-weight: 700;
+}
+
+.reference-stage-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.reference-stage-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #d8dee4;
+  border-radius: 14px;
+  background: #fcfdff;
+}
+
+.reference-stage-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #16202a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.reference-inline-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge.subtle {
+  background: #eef3f8;
+  border-color: #dbe5ef;
+  color: #243648;
+}
+
+.reference-pathway {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.reference-pathway-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reference-pathway-card {
+  width: min(240px, 100%);
+  padding: 14px 16px;
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.reference-pathway-card p {
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.reference-pathway-arrow {
+  color: #68819a;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.reference-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.decision-card {
+  background: linear-gradient(180deg, #f9fbfd 0%, #ffffff 100%);
+}
+
 @media (max-width: 900px) {
   .emotion-wheel-layout {
     grid-template-columns: 1fr;

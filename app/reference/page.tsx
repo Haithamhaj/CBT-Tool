@@ -4,6 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { EmotionWheel } from "../../src/components/emotion-wheel";
 import { HelpTip } from "../../src/components/help-tip";
 import { useLanguage } from "../../src/components/language-provider";
+import { DecisionFlowDiagram } from "../../src/components/reference/decision-flow-diagram";
+import { LayerDiagram } from "../../src/components/reference/layer-diagram";
+import { PathwayDiagram } from "../../src/components/reference/pathway-diagram";
+import { SequenceDiagram } from "../../src/components/reference/sequence-diagram";
+import { SessionStageMap } from "../../src/components/reference/session-stage-map";
+import { getReferenceHubAlignment } from "../../src/lib/i18n/reference-hub-alignment";
 import { getReferenceHubContent } from "../../src/lib/i18n/reference-hub-content";
 import {
   getReferenceHubOperationalContent,
@@ -12,6 +18,7 @@ import {
 
 export default function ReferenceHubPage() {
   const { language, t } = useLanguage();
+  const alignment = getReferenceHubAlignment(language);
   const content = getReferenceHubContent(language);
   const operational = getReferenceHubOperationalContent(language);
   const [activeTab, setActiveTab] = useState<ReferenceTabId>("overview");
@@ -33,7 +40,67 @@ export default function ReferenceHubPage() {
   }, [language]);
 
   const currentHint = operational.sectionHints[activeTab];
-  const shortcutTabs: ReferenceTabId[] = ["tools", "thinking", "emotions", "worksheets", "goals"];
+  const shortcutTabs: ReferenceTabId[] = [
+    "session-structure",
+    "exploration-stage",
+    "techniques",
+    "thinking",
+    "treatment-plan"
+  ];
+  const allTechniques = useMemo(
+    () => [
+      ...content.tools.items.map((tool, index) => ({
+        ...tool,
+        ...operational.toolsMeta[index]
+      })),
+      ...alignment.extraTechniques
+    ],
+    [alignment.extraTechniques, content.tools.items, operational.toolsMeta]
+  );
+  const explorationStages = useMemo(
+    () =>
+      content.fiveSessionMap.items.map((item, index) => ({
+        title: item.session,
+        focus: operational.sessionMeta[index]?.focus ?? item.purpose,
+        tools: item.tools,
+        output: item.output
+      })),
+    [content.fiveSessionMap.items, operational.sessionMeta]
+  );
+  const treatmentPath = useMemo(
+    () => [
+      {
+        title: language === "ar" ? "قائمة المشكلات" : "Problem list",
+        description:
+          language === "ar"
+            ? "ابدأ بتسمية المشكلات الحالية بشكل محدد بدل تركها عامة أو متداخلة."
+            : "Start by naming the current problems clearly instead of keeping them broad or mixed together."
+      },
+      {
+        title: language === "ar" ? "الصياغة المعرفية" : "Cognitive formulation",
+        description:
+          language === "ar"
+            ? "اربط الموقف بالأفكار والمشاعر والسلوك حتى تعرف ما الذي يحافظ على المشكلة."
+            : "Link the situation, thoughts, emotions, and behavior so you can see what is maintaining the problem."
+      },
+      {
+        title: language === "ar" ? "الأهداف المباشرة" : "Immediate goals",
+        description: content.goals.items[0]?.text ?? ""
+      },
+      {
+        title: language === "ar" ? "الأهداف المتوسطة" : "Medium-term goals",
+        description: content.goals.items[1]?.text ?? ""
+      },
+      {
+        title: language === "ar" ? "الفنيات والواجب" : "Techniques and homework",
+        description:
+          language === "ar"
+            ? "اختر الفنية والواجب من الصياغة والهدف، لا من التفضيل الشخصي أو العشوائية."
+            : "Choose the technique and homework from the formulation and goal, not from personal preference or random variety."
+      }
+    ],
+    [content.goals.items, language]
+  );
 
   const tabPanels = useMemo<Record<ReferenceTabId, React.ReactNode>>(
     () => ({
@@ -44,18 +111,7 @@ export default function ReferenceHubPage() {
               <h3>{operational.diagrams.cbtModelTitle}</h3>
               <span className="badge">{operational.toolFields.useDuring}</span>
             </div>
-            <div className="reference-flow">
-              {operational.diagrams.cbtModelNodes.map((node, index) => (
-                <div key={node} className="reference-flow-wrap">
-                  <div className="reference-flow-node">{node}</div>
-                  {index < operational.diagrams.cbtModelNodes.length - 1 ? (
-                    <div className="reference-flow-arrow" aria-hidden="true">
-                      {language === "ar" ? "←" : "→"}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+            <SequenceDiagram nodes={operational.diagrams.cbtModelNodes} rtl={language === "ar"} />
           </div>
 
           <div className="panel stack">
@@ -102,22 +158,33 @@ export default function ReferenceHubPage() {
           </div>
         </div>
       ),
+      principles: (
+        <div className="stack">
+          <div className="panel stack">
+            <h3>{alignment.principlesTitle}</h3>
+            <p className="muted">{alignment.principlesIntro}</p>
+            <div className="reference-card-grid">
+              {alignment.principles.map((principle, index) => (
+                <article key={principle.title} className="reference-card">
+                  <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                    <strong>{principle.title}</strong>
+                    <span className="badge">{index + 1}</span>
+                  </div>
+                  <p>{principle.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
       "session-structure": (
         <div className="stack">
           <div className="panel reference-diagram-panel stack">
-            <h3>{operational.diagrams.sessionFlowTitle}</h3>
-            <div className="reference-flow">
-              {operational.diagrams.sessionFlowNodes.map((node, index) => (
-                <div key={node} className="reference-flow-wrap">
-                  <div className="reference-flow-node">{node}</div>
-                  {index < operational.diagrams.sessionFlowNodes.length - 1 ? (
-                    <div className="reference-flow-arrow" aria-hidden="true">
-                      {language === "ar" ? "←" : "→"}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+            <SequenceDiagram
+              title={operational.diagrams.sessionFlowTitle}
+              nodes={operational.diagrams.sessionFlowNodes}
+              rtl={language === "ar"}
+            />
           </div>
 
           <div className="panel stack">
@@ -149,22 +216,22 @@ export default function ReferenceHubPage() {
           </div>
         </div>
       ),
-      "five-sessions": (
+      "exploration-stage": (
         <div className="stack">
           <div className="panel reference-diagram-panel stack">
-            <h3>{operational.diagrams.fiveSessionsTitle}</h3>
-            <div className="reference-flow">
-              {operational.diagrams.fiveSessionsNodes.map((node, index) => (
-                <div key={node} className="reference-flow-wrap">
-                  <div className="reference-flow-node numbered">{node}</div>
-                  {index < operational.diagrams.fiveSessionsNodes.length - 1 ? (
-                    <div className="reference-flow-arrow" aria-hidden="true">
-                      {language === "ar" ? "←" : "→"}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+            <SequenceDiagram
+              title={operational.diagrams.fiveSessionsTitle}
+              nodes={operational.diagrams.fiveSessionsNodes}
+              numbered
+              rtl={language === "ar"}
+            />
+          </div>
+
+          <div className="panel stack">
+            <SessionStageMap
+              title={language === "ar" ? "خريطة المرحلة الاستكشافية" : "Exploration stage map"}
+              items={explorationStages}
+            />
           </div>
 
           <div className="panel stack">
@@ -190,7 +257,29 @@ export default function ReferenceHubPage() {
           </div>
         </div>
       ),
-      tools: (
+      "cognitive-model": (
+        <div className="stack">
+          <div className="panel reference-diagram-panel stack">
+            <SequenceDiagram
+              title={operational.diagrams.cbtModelTitle}
+              nodes={operational.diagrams.cbtModelNodes}
+              rtl={language === "ar"}
+            />
+          </div>
+
+          <div className="panel stack">
+            <LayerDiagram
+              title={content.cognitiveStructure.title}
+              layers={content.cognitiveStructure.levels.map((level) => ({
+                title: level.name,
+                description: level.description,
+                example: `${language === "ar" ? "مثال" : "Example"}: ${level.example}`
+              }))}
+            />
+          </div>
+        </div>
+      ),
+      techniques: (
         <div className="stack">
           <div className="reference-checklist-grid">
             {operational.checklists.slice(4, 6).map((checklist) => (
@@ -209,11 +298,11 @@ export default function ReferenceHubPage() {
           </div>
 
           <div className="panel stack">
-            <h3>{content.tools.title}</h3>
+            <h3>{language === "ar" ? "الفنيات العلاجية" : "Therapeutic Techniques"}</h3>
             <p className="muted">{content.tools.intro}</p>
             <div className="reference-browser">
               <aside className="reference-browser-list">
-                {content.tools.items.map((tool, index) => (
+                {allTechniques.map((tool, index) => (
                   <button
                     key={tool.name}
                     type="button"
@@ -228,29 +317,28 @@ export default function ReferenceHubPage() {
 
               <section className="reference-browser-detail panel">
                 {(() => {
-                  const tool = content.tools.items[selectedToolIndex];
-                  const meta = operational.toolsMeta[selectedToolIndex];
+                  const tool = allTechniques[selectedToolIndex];
                   return (
                     <div className="stack">
                       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
                         <strong>{tool.name}</strong>
-                        <span className="badge">{meta.level}</span>
+                        <span className="badge">{tool.level}</span>
                       </div>
                       <div className="emotion-chips">
-                        {meta.tags.map((tag) => (
+                        {tool.tags.map((tag) => (
                           <span key={tag} className="badge">{tag}</span>
                         ))}
                       </div>
                       <p><strong>{language === "ar" ? "ما هي؟" : "What it is:"}</strong> {tool.what}</p>
                       <p><strong>{language === "ar" ? "متى تُستخدم؟" : "When to use it:"}</strong> {tool.when}</p>
-                      <p><strong>{operational.toolFields.whenNot}:</strong> {meta.whenNot}</p>
-                      <p><strong>{operational.toolFields.expectedOutput}:</strong> {meta.expectedOutput}</p>
+                      <p><strong>{operational.toolFields.whenNot}:</strong> {tool.whenNot}</p>
+                      <p><strong>{operational.toolFields.expectedOutput}:</strong> {tool.expectedOutput}</p>
                       <p><strong>{language === "ar" ? "خطأ شائع:" : "Common mistake:"}</strong> {tool.mistake}</p>
 
                       <div className="detail-callout">
                         <strong>{language === "ar" ? "مؤشرات أنها الأداة المناسبة الآن" : "Signs this tool fits now"}</strong>
                         <div className="list">
-                          {meta.fitSigns.map((sign) => (
+                          {tool.fitSigns.map((sign) => (
                             <div key={sign} className="list-item reference-check">
                               {sign}
                             </div>
@@ -260,7 +348,7 @@ export default function ReferenceHubPage() {
 
                       <div className="detail-callout">
                         <strong>{language === "ar" ? "كيف تبدأ بها عمليًا" : "How to start with it"}</strong>
-                        <div>{meta.starterMove}</div>
+                        <div>{tool.starterMove}</div>
                       </div>
 
                       <div className="detail-callout">
@@ -278,35 +366,34 @@ export default function ReferenceHubPage() {
               </section>
             </div>
           </div>
+          <div className="panel stack">
+            <DecisionFlowDiagram
+              title={alignment.techniqueDecisionTitle}
+              steps={alignment.techniqueDecision}
+            />
+            <p className="muted">{alignment.techniqueDecisionIntro}</p>
+          </div>
         </div>
       ),
       thinking: (
         <div className="stack">
           <div className="panel stack">
-            <h3>{content.cognitiveStructure.title}</h3>
-            <p className="muted">{content.cognitiveStructure.intro}</p>
-            <div className="cognitive-structure">
-              {content.cognitiveStructure.levels.map((level, index) => (
-                <div key={level.name} className="cognitive-structure-step">
-                  <div className="cognitive-structure-card">
-                    <strong>{level.name}</strong>
-                    <p>{level.description}</p>
-                    <div className="muted">
-                      <strong>{language === "ar" ? "مثال:" : "Example:"}</strong> {level.example}
-                    </div>
-                  </div>
-                  {index < content.cognitiveStructure.levels.length - 1 ? (
-                    <div className="cognitive-structure-arrow" aria-hidden="true">
-                      ↓
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+            <LayerDiagram
+              title={content.thinkingLevels.title}
+              layers={content.thinkingLevels.items.map((level) => ({
+                title: level.name,
+                description: `${level.definition} ${language === "ar" ? "الفرق" : "Difference"}: ${level.difference}`,
+                example: `${language === "ar" ? "مثال" : "Example"}: ${level.example}`
+              }))}
+            />
           </div>
 
           <div className="panel stack">
-            <h3>{content.thinkingLevels.title}</h3>
+            <h3>{content.distortions.title}</h3>
+            <p className="muted">{content.distortions.intro}</p>
+          </div>
+          <div className="panel stack">
+            <h3>{language === "ar" ? "مقارنة سريعة بين مستويات التفكير" : "Quick comparison of thinking levels"}</h3>
             <div className="reference-card-grid">
               {content.thinkingLevels.items.map((level) => (
                 <article key={level.name} className="reference-card">
@@ -319,41 +406,52 @@ export default function ReferenceHubPage() {
             </div>
           </div>
           <div className="panel stack">
-            <h3>{content.distortions.title}</h3>
-            <p className="muted">{content.distortions.intro}</p>
-            <div className="reference-browser">
-              <aside className="reference-browser-list">
-                {content.distortions.items.map((item, index) => (
-                  <button
-                    key={item.name}
-                    type="button"
-                    className={selectedDistortionIndex === index ? "reference-browser-item active" : "reference-browser-item"}
-                    onClick={() => setSelectedDistortionIndex(index)}
-                  >
-                    <strong>{item.name}</strong>
-                    <span>{item.definition}</span>
-                  </button>
-                ))}
-              </aside>
-
-              <section className="reference-browser-detail panel">
-                {(() => {
-                  const item = content.distortions.items[selectedDistortionIndex];
-                  return (
-                    <div className="stack">
-                      <strong>{item.name}</strong>
-                      <p><strong>{language === "ar" ? "تعريف بسيط:" : "Simple definition:"}</strong> {item.definition}</p>
-                      <p><strong>{language === "ar" ? "مثال:" : "Example:"}</strong> {item.example}</p>
-                      <p><strong>{language === "ar" ? "كيف يظهر عادة؟" : "How it usually appears:"}</strong> {item.appearsAs}</p>
-                      <div className="detail-callout">
-                        <strong>{language === "ar" ? "كيف لا تخلطه بغيره" : "Do not confuse it with"}</strong>
-                        <div>{item.differsFrom}</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </section>
+            <h3>{alignment.beliefExtractionTitle}</h3>
+            <p className="muted">{alignment.beliefExtractionIntro}</p>
+            <div className="reference-card-grid">
+              {alignment.beliefExtractionMethods.map((method, index) => (
+                <article key={method.title} className="reference-card">
+                  <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                    <strong>{method.title}</strong>
+                    <span className="badge">{index + 1}</span>
+                  </div>
+                  <p>{method.description}</p>
+                </article>
+              ))}
             </div>
+          </div>
+          <div className="reference-browser">
+            <aside className="reference-browser-list">
+              {content.distortions.items.map((item, index) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  className={selectedDistortionIndex === index ? "reference-browser-item active" : "reference-browser-item"}
+                  onClick={() => setSelectedDistortionIndex(index)}
+                >
+                  <strong>{item.name}</strong>
+                  <span>{item.definition}</span>
+                </button>
+              ))}
+            </aside>
+
+            <section className="reference-browser-detail panel">
+              {(() => {
+                const item = content.distortions.items[selectedDistortionIndex];
+                return (
+                  <div className="stack">
+                    <strong>{item.name}</strong>
+                    <p><strong>{language === "ar" ? "تعريف بسيط:" : "Simple definition:"}</strong> {item.definition}</p>
+                    <p><strong>{language === "ar" ? "مثال:" : "Example:"}</strong> {item.example}</p>
+                    <p><strong>{language === "ar" ? "كيف يظهر عادة؟" : "How it usually appears:"}</strong> {item.appearsAs}</p>
+                    <div className="detail-callout">
+                      <strong>{language === "ar" ? "كيف لا تخلطه بغيره" : "Do not confuse it with"}</strong>
+                      <div>{item.differsFrom}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </section>
           </div>
         </div>
       ),
@@ -469,8 +567,16 @@ export default function ReferenceHubPage() {
           </div>
         </div>
       ),
-      goals: (
+      "treatment-plan": (
         <div className="stack">
+          <div className="panel reference-diagram-panel stack">
+            <PathwayDiagram
+              title={language === "ar" ? "مسار بناء الخطة العلاجية" : "Treatment planning pathway"}
+              steps={treatmentPath}
+              rtl={language === "ar"}
+            />
+          </div>
+
           <div className="panel stack">
             <h3>{content.goals.title}</h3>
             <div className="reference-card-grid">
@@ -490,6 +596,29 @@ export default function ReferenceHubPage() {
                 <div key={item} className="list-item reference-check">
                   {item}
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+      "therapy-obstacles": (
+        <div className="stack">
+          <div className="panel stack">
+            <h3>{alignment.therapyObstaclesTitle}</h3>
+            <p className="muted">{alignment.therapyObstaclesIntro}</p>
+            <div className="reference-card-grid">
+              {alignment.therapyObstacles.map((group) => (
+                <article key={group.title} className="reference-card">
+                  <strong>{group.title}</strong>
+                  <p>{group.intro}</p>
+                  <div className="list">
+                    {group.items.map((item) => (
+                      <div key={item} className="list-item reference-check">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </article>
               ))}
             </div>
           </div>
@@ -536,12 +665,16 @@ export default function ReferenceHubPage() {
       )
     }),
     [
+      alignment,
+      allTechniques,
       content,
+      explorationStages,
       language,
       operational,
       selectedDistortionIndex,
       selectedToolIndex,
-      selectedWorksheetIndex
+      selectedWorksheetIndex,
+      treatmentPath
     ]
   );
 

@@ -448,7 +448,11 @@ const content: Record<AppLanguage, HubContent> = {
         { name: "Should statements", definition: "Using rigid rules about what must always happen.", example: "I should never make mistakes.", appearsAs: "Strong guilt, anger, or disappointment when life does not match the rule.", differsFrom: "Different from fairness fallacy because it is about rigid inner rules, not only fairness expectations." },
         { name: "Labeling", definition: "Turning one behavior or failure into a global identity.", example: "I made a mistake, so I am a failure.", appearsAs: "One event becomes a whole identity.", differsFrom: "Different from all-or-nothing thinking because the conclusion becomes identity, not only outcome quality." },
         { name: "Blaming", definition: "Placing all responsibility on self or others instead of looking at the full situation.", example: "My manager made me feel this way, so it is entirely their fault.", appearsAs: "No balanced ownership.", differsFrom: "Different from personalization because blaming can target self or others in a one-sided way." },
-        { name: "Fairness fallacy", definition: "Assuming life should work by your idea of fairness.", example: "If I worked hard, this should not happen.", appearsAs: "Resentment because reality did not match an internal fairness rule.", differsFrom: "Different from should statements because the focus is fairness and deservedness." }
+        { name: "Fairness fallacy", definition: "Assuming life should work by your idea of fairness.", example: "If I worked hard, this should not happen.", appearsAs: "Resentment because reality did not match an internal fairness rule.", differsFrom: "Different from should statements because the focus is fairness and deservedness." },
+        { name: "Control fallacy", definition: "Thinking either that you control everything or that you control nothing.", example: "If they are upset, it must be because I failed them completely.", appearsAs: "Inflated responsibility or total helplessness.", differsFrom: "Different from personalization because it centers control itself, not only blame." },
+        { name: "Always being right", definition: "Treating being right as more important than understanding reality or preserving connection.", example: "I must prove my view is correct no matter how the conversation goes.", appearsAs: "Argument wins over reflection.", differsFrom: "Different from should statements because the focus is proving correctness, not only rigid rules." },
+        { name: "Change fallacy", definition: "Believing other people must change so that you can feel or function better.", example: "If they behave differently, then I will finally be okay.", appearsAs: "Relief is made dependent on others changing first.", differsFrom: "Different from blaming because the focus is demanding change as the condition for relief." },
+        { name: "Reward fallacy", definition: "Expecting sacrifice and self-denial to be automatically repaid later just because they were endured.", example: "After everything I tolerated, life should reward me now.", appearsAs: "Hidden contract with reality that leads to disappointment.", differsFrom: "Different from fairness fallacy because it centers expected payoff for sacrifice." }
       ]
     },
     emotions: {
@@ -480,6 +484,22 @@ const content: Record<AppLanguage, HubContent> = {
             type: "table",
             headers: ["Situation", "Emotion", "Intensity", "Thought", "Behavior"],
             rows: [["Team update", "Anxiety", "80/100", "I will sound incompetent", "Spoke briefly"]]
+          }
+        },
+        {
+          name: "Observation table with thinking errors",
+          use: "To continue monitoring while explicitly naming the likely thinking error in each situation.",
+          includes: ["situation", "emotion", "emotion intensity", "dominant thought", "thinking error", "behavior"],
+          workedExample: {
+            title: "Worked example",
+            caseContext: "The trainee already has a few monitoring examples and is now learning to identify distortions inside the thought.",
+            whyThisShape: "This version helps move from simple description toward cognitive pattern recognition.",
+            copyTip: "Do not fill the thinking-error column until the thought itself is written clearly."
+          },
+          preview: {
+            type: "table",
+            headers: ["Situation", "Emotion", "Intensity", "Thought", "Thinking error", "Behavior"],
+            rows: [["Team update", "Anxiety", "80/100", "If I pause, they will think I am weak", "Jumping to conclusions", "Avoid speaking at length"]]
           }
         },
         {
@@ -945,7 +965,11 @@ const content: Record<AppLanguage, HubContent> = {
         { name: "المفترضات", definition: "قواعد جامدة تقول كيف يجب أن تسير الأمور دائمًا.", example: "يجب ألا أخطئ أبدًا.", appearsAs: "ذنب أو غضب أو خيبة عندما لا تمشي الحياة حسب القاعدة.", differsFrom: "تختلف عن مغالطة العدالة لأنها تدور حول قواعد داخلية صارمة أكثر من استحقاق الإنصاف." },
         { name: "الوصم", definition: "تحويل خطأ أو موقف إلى هوية كاملة للشخص.", example: "أخطأت، إذن أنا فاشل.", appearsAs: "سلوك واحد يصبح تعريفًا كاملًا للذات.", differsFrom: "يختلف عن التفكير المستقطب لأن النتيجة تتحول هنا إلى هوية كاملة." },
         { name: "إلقاء اللوم", definition: "تحميل الذات أو الآخرين كل المسؤولية بدل رؤية الصورة الكاملة.", example: "مديري هو السبب الكامل فيما أشعر به.", appearsAs: "لا يوجد توازن في تحمل المسؤولية.", differsFrom: "يختلف عن الشخصنة لأنه قد يوجّه المسؤولية كلها إلى الذات أو إلى الآخرين بشكل أحادي." },
-        { name: "مغالطة العدالة", definition: "افتراض أن الحياة يجب أن تسير وفق تصورك الخاص للإنصاف.", example: "ما دمت اجتهدت، فلا ينبغي أن يحدث هذا لي.", appearsAs: "استياء لأن الواقع لم يطابق قاعدة داخلية عن العدالة.", differsFrom: "تختلف عن المفترضات لأن التركيز هنا على العدالة والاستحقاق." }
+        { name: "مغالطة العدالة", definition: "افتراض أن الحياة يجب أن تسير وفق تصورك الخاص للإنصاف.", example: "ما دمت اجتهدت، فلا ينبغي أن يحدث هذا لي.", appearsAs: "استياء لأن الواقع لم يطابق قاعدة داخلية عن العدالة.", differsFrom: "تختلف عن المفترضات لأن التركيز هنا على العدالة والاستحقاق." },
+        { name: "مغالطة السيطرة", definition: "التفكير بأنك تتحكم في كل شيء أو أنك لا تملك أي تحكم إطلاقًا.", example: "إذا انزعجوا فذلك يعني أنني فشلت بالكامل في إدارة الأمر.", appearsAs: "مسؤولية متضخمة أو عجز كامل.", differsFrom: "تختلف عن الشخصنة لأنها تركز على معنى السيطرة نفسها لا على اللوم فقط." },
+        { name: "أن تكون على صواب دائمًا", definition: "اعتبار إثبات الصواب أهم من فهم الواقع أو الحفاظ على العلاقة.", example: "يجب أن أثبت أن وجهة نظري صحيحة مهما كان أثر ذلك على الحوار.", appearsAs: "الجدال يغلب التأمل.", differsFrom: "تختلف عن المفترضات لأن التركيز هنا على إثبات الصواب لا فقط على القواعد الجامدة." },
+        { name: "مغالطة التغيير", definition: "الاعتقاد أن الآخرين يجب أن يتغيروا أولًا حتى أشعر أو أتحسن.", example: "إذا غيّروا طريقتهم فسأصبح بخير أخيرًا.", appearsAs: "الراحة النفسية مربوطة بتغيير الآخرين.", differsFrom: "تختلف عن إلقاء اللوم لأنها تجعل التغيير الخارجي شرطًا للارتياح." },
+        { name: "مغالطة فكرة المكافأة", definition: "توقع أن التضحية والحرمان سيُكافآن تلقائيًا لاحقًا فقط لأن الشخص تحملهما.", example: "بعد كل ما صبرت عليه، من المفترض أن تكافئني الحياة الآن.", appearsAs: "عقد خفي مع الواقع يؤدي إلى الإحباط.", differsFrom: "تختلف عن مغالطة العدالة لأنها تركز على العائد المتوقع مقابل التضحية." }
       ]
     },
     emotions: {
@@ -977,6 +1001,22 @@ const content: Record<AppLanguage, HubContent> = {
             type: "table",
             headers: ["الموقف", "الشعور", "الدرجة", "الفكرة", "السلوك"],
             rows: [["تحديث الفريق", "قلق", "80/100", "سأبدو غير كفء", "تكلمت بسرعة"]]
+          }
+        },
+        {
+          name: "جدول الرصد مع أخطاء التفكير",
+          use: "لمواصلة الرصد مع إضافة تسمية خطأ التفكير المحتمل في كل موقف.",
+          includes: ["الموقف", "المشاعر", "درجة الشعور", "الفكرة المسيطرة", "خطأ التفكير", "السلوك"],
+          workedExample: {
+            title: "مثال مكتمل",
+            caseContext: "أصبح لدى المتدرب أمثلة رصد كافية وبدأ يتعلم كيف يحدد التشوه داخل الفكرة.",
+            whyThisShape: "هذا الشكل ينقل العمل من الوصف فقط إلى التعرف على النمط المعرفي نفسه.",
+            copyTip: "لا تملأ خانة خطأ التفكير إلا بعد كتابة الفكرة نفسها بوضوح."
+          },
+          preview: {
+            type: "table",
+            headers: ["الموقف", "الشعور", "الدرجة", "الفكرة", "خطأ التفكير", "السلوك"],
+            rows: [["تحديث الفريق", "قلق", "80/100", "إذا توقفت قليلًا فسيظنون أنني ضعيف", "القفز إلى الاستنتاجات", "أتجنب الكلام المطول"]]
           }
         },
         {
