@@ -46,6 +46,11 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
+function escapeCsv(value: string) {
+  const normalized = value.replaceAll('"', '""');
+  return `"${normalized}"`;
+}
+
 function layoutToHtml(layout: WorksheetLayout) {
   if (layout.type === "table") {
     return `
@@ -237,6 +242,9 @@ export default function ReferenceHubPage() {
     [content.goals.items, language]
   );
   const selectedWorksheet = content.worksheets.items[selectedWorksheetIndex];
+  const worksheetSupportsSpreadsheet =
+    selectedWorksheet?.blankTemplate.type === "table" &&
+    (selectedWorksheetIndex === 1 || selectedWorksheetIndex === 2);
 
   const worksheetDocumentHtml = useMemo(() => {
     if (!selectedWorksheet) {
@@ -286,7 +294,7 @@ export default function ReferenceHubPage() {
       </html>`;
   }, [language, selectedWorksheet]);
 
-  function openWorksheetDocument(mode: "print" | "download") {
+  function openWorksheetDocument(mode: "print" | "download" | "pdf") {
     if (!selectedWorksheet || !worksheetDocumentHtml) {
       return;
     }
@@ -311,7 +319,29 @@ export default function ReferenceHubPage() {
     popup.document.write(worksheetDocumentHtml);
     popup.document.close();
     popup.focus();
-    popup.print();
+
+    if (mode === "print" || mode === "pdf") {
+      popup.print();
+    }
+  }
+
+  function downloadWorksheetCsv() {
+    if (!selectedWorksheet || selectedWorksheet.blankTemplate.type !== "table") {
+      return;
+    }
+
+    const lines = [
+      selectedWorksheet.blankTemplate.headers.map((header) => escapeCsv(header)).join(","),
+      ...selectedWorksheet.blankTemplate.rows.map((row) => row.map((cell) => escapeCsv(cell || "")).join(","))
+    ];
+
+    const blob = new Blob([`\uFEFF${lines.join("\n")}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${selectedWorksheet.name.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "") || "worksheet"}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   const tabPanels = useMemo<Record<ReferenceTabId, React.ReactNode>>(
@@ -711,9 +741,17 @@ export default function ReferenceHubPage() {
                     <button type="button" onClick={() => openWorksheetDocument("print")}>
                       {language === "ar" ? "طباعة الورقة" : "Print worksheet"}
                     </button>
+                    <button type="button" className="secondary" onClick={() => openWorksheetDocument("pdf")}>
+                      {language === "ar" ? "حفظ PDF" : "Save as PDF"}
+                    </button>
                     <button type="button" className="secondary" onClick={() => openWorksheetDocument("download")}>
                       {language === "ar" ? "تنزيل HTML" : "Download HTML"}
                     </button>
+                    {worksheetSupportsSpreadsheet ? (
+                      <button type="button" className="secondary" onClick={downloadWorksheetCsv}>
+                        {language === "ar" ? "تنزيل Excel (CSV)" : "Download Excel (CSV)"}
+                      </button>
+                    ) : null}
                   </div>
 
                   <div className="worksheet-includes">
@@ -868,6 +906,7 @@ export default function ReferenceHubPage() {
       explorationStages,
       language,
       selectedWorksheet,
+      worksheetSupportsSpreadsheet,
       operational,
       selectedDistortionIndex,
       selectedToolIndex,
