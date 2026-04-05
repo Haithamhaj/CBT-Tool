@@ -10,7 +10,10 @@ export function NavShell({ children }: { children: React.ReactNode }) {
   const { currentUser } = useRuntimeAuth();
   const { language, setLanguage, t } = useLanguage();
 
-  const navItems = [{ href: "/reference", label: t(language, "navReferenceHub") }];
+  const navItems = [
+    { href: "/reference", label: t(language, "navReferenceHub") },
+    ...(currentUser.role === "facilitator" ? [{ href: "/admin", label: t(language, "navAdmin") }] : [])
+  ];
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
