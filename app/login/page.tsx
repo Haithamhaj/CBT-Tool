@@ -13,6 +13,7 @@ const devFallbackEmails = [
   "trainee.two@example.com",
   "facilitator@example.com"
 ];
+const MAGIC_LINK_COOLDOWN_SECONDS = 60;
 
 export default function LoginPage() {
   const { language, setLanguage, t, translateServerText } = useLanguage();
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [cooldownSecondsLeft, setCooldownSecondsLeft] = useState(0);
   const supabase = useMemo(
     () => (hasSupabaseAuth ? createSupabaseBrowserClient() : null),
     []
@@ -32,8 +34,32 @@ export default function LoginPage() {
     }
   }, [language, t]);
 
+  useEffect(() => {
+    if (cooldownSecondsLeft <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setCooldownSecondsLeft((current) => {
+        if (current <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+
+        return current - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [cooldownSecondsLeft]);
+
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (cooldownSecondsLeft > 0) {
+      setError(t(language, "magicLinkCooldownActive", cooldownSecondsLeft));
+      return;
+    }
+
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -54,6 +80,7 @@ export default function LoginPage() {
         }
 
         setSuccess(t(language, "magicLinkSent"));
+        setCooldownSecondsLeft(MAGIC_LINK_COOLDOWN_SECONDS);
         setIsLoading(false);
         return;
       }
@@ -133,10 +160,18 @@ export default function LoginPage() {
 
           {error ? <div className="error">{translateServerText(error)}</div> : null}
           {success ? <div className="success">{success}</div> : null}
+          {hasSupabaseAuth && cooldownSecondsLeft > 0 ? (
+            <div className="callout callout-advisory stack">
+              <strong>{t(language, "magicLinkCheckInboxTitle")}</strong>
+              <div className="muted">{t(language, "magicLinkCooldownNotice", cooldownSecondsLeft)}</div>
+            </div>
+          ) : null}
 
-          <button type="submit" disabled={isLoading}>
+          <button type="submit" disabled={isLoading || cooldownSecondsLeft > 0}>
             {isLoading
               ? t(language, "signingIn")
+              : cooldownSecondsLeft > 0
+                ? t(language, "magicLinkResendIn", cooldownSecondsLeft)
               : hasSupabaseAuth
                 ? t(language, "sendMagicLink")
                 : t(language, "signIn")}
