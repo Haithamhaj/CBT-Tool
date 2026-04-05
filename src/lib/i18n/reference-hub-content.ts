@@ -57,17 +57,31 @@ type Worksheet = {
     caseContext: string;
     whyThisShape: string;
     copyTip: string;
+    layout: WorksheetLayout;
   };
-  preview: {
-    type: "table" | "form";
-    headers?: string[];
-    rows?: string[][];
-    fields?: Array<{
-      label: string;
-      value: string;
-    }>;
-  };
+  blankTemplate: WorksheetLayout;
 };
+
+type WorksheetLayout =
+  | {
+      type: "table";
+      headers: string[];
+      rows: string[][];
+    }
+  | {
+      type: "form";
+      fields: Array<{
+        label: string;
+        value: string;
+      }>;
+    }
+  | {
+      type: "sections";
+      sections: Array<{
+        title: string;
+        lines: string[];
+      }>;
+    };
 
 type GlossaryItem = {
   term: string;
@@ -471,35 +485,109 @@ const content: Record<AppLanguage, HubContent> = {
       title: "Worksheets and Templates",
       items: [
         {
-          name: "Observation table",
-          use: "To capture situation, emotions, dominant thoughts, behavior, and later thinking errors.",
-          includes: ["situation", "emotion", "emotion intensity", "dominant thought", "behavior"],
+          name: "Case summary sheet",
+          use: "Use it when you need one clear page that summarizes the client, the main complaint, the goals, and the current CBT direction.",
+          includes: ["case snapshot", "main complaint", "problem list", "goals", "belief hypotheses", "starting techniques", "current homework"],
           workedExample: {
             title: "Worked example",
-            caseContext: "The trainee is tracking meeting anxiety after being asked for an update in front of the team.",
-            whyThisShape: "This structure forces one specific moment instead of a vague summary of the whole week.",
-            copyTip: "Use the same columns and fill only one real situation per row."
+            caseContext: "The trainee has completed the first exploration sessions and now needs one page that holds the case together before moving into deeper work.",
+            whyThisShape: "This sheet is not a monitoring table. It is a structured case snapshot used to orient the work and prevent scattered notes.",
+            copyTip: "Keep each line brief and clinically useful. Do not turn the summary into a narrative history.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "Client snapshot", lines: ["Name/code: H.A.", "Age: 29", "Context: works in a corporate team"] },
+                { title: "Main complaint", lines: ["Severe anxiety in meetings and fear of negative evaluation"] },
+                { title: "Current problems", lines: ["Avoids speaking", "Ruminates after criticism", "Withdraws when asked to explain"] },
+                { title: "Goals", lines: ["Immediate: identify automatic thoughts in meetings", "Medium-term: reduce avoidance and self-attack", "Long-term: speak with steadier confidence"] },
+                { title: "Belief hypotheses", lines: ["Intermediate: If I am not strong, I should stay silent", "Core: I am not good enough"] },
+                { title: "Starting techniques and homework", lines: ["Observation table with thinking errors", "One record after the next team update"] }
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "Client snapshot", lines: ["Name/code: __________", "Age: __________", "Context: __________"] },
+              { title: "Main complaint", lines: ["________________________________________"] },
+              { title: "Current problems", lines: ["1. ____________________", "2. ____________________", "3. ____________________"] },
+              { title: "Goals", lines: ["Immediate: ____________________", "Medium-term: ____________________", "Long-term: ____________________"] },
+              { title: "Belief hypotheses", lines: ["Intermediate belief: ____________________", "Core belief: ____________________"] },
+              { title: "Starting techniques and homework", lines: ["Techniques: ____________________", "Homework: ____________________"] }
+            ]
+          }
+        },
+        {
+          name: "Observation table",
+          use: "Use it early to capture more than one real situation before jumping into interpretation or deeper restructuring.",
+          includes: ["situation", "automatic thought", "emotion", "emotion intensity", "behavior", "notes"],
+          workedExample: {
+            title: "Worked example",
+            caseContext: "The trainee is still gathering raw material and needs three concrete examples instead of broad complaints.",
+            whyThisShape: "The table keeps the work grounded. Each row captures one observable moment rather than a whole life story.",
+            copyTip: "Write short specific situations. If the row becomes abstract, it is no longer a good monitoring entry.",
+            layout: {
+              type: "table",
+              headers: ["Situation", "Automatic thought", "Emotion", "Intensity", "Behavior", "Notes"],
+              rows: [
+                ["Team update meeting", "I will sound incompetent", "Anxiety", "80/100", "Spoke briefly and looked down", "Triggered when asked unexpectedly"],
+                ["Manager asked for clarification", "He noticed I am weak", "Shame", "75/100", "Apologized and rushed", "Thought came instantly"],
+                ["Reading the follow-up email", "I probably disappointed them", "Anxiety", "60/100", "Avoided replying for one hour", "Rumination started afterward"]
+              ]
+            }
+          },
+          blankTemplate: {
             type: "table",
-            headers: ["Situation", "Emotion", "Intensity", "Thought", "Behavior"],
-            rows: [["Team update", "Anxiety", "80/100", "I will sound incompetent", "Spoke briefly"]]
+            headers: ["Situation", "Automatic thought", "Emotion", "Intensity", "Behavior", "Notes"],
+            rows: [
+              ["", "", "", "", "", ""],
+              ["", "", "", "", "", ""],
+              ["", "", "", "", "", ""]
+            ]
           }
         },
         {
           name: "Observation table with thinking errors",
-          use: "To continue monitoring while explicitly naming the likely thinking error in each situation.",
-          includes: ["situation", "emotion", "emotion intensity", "dominant thought", "thinking error", "behavior"],
+          use: "Use it when simple monitoring is already working and you now want to name the likely distortion and move toward cognitive work.",
+          includes: ["situation", "automatic thought", "emotion", "intensity", "thinking error", "evidence review", "alternative thought"],
           workedExample: {
             title: "Worked example",
             caseContext: "The trainee already has a few monitoring examples and is now learning to identify distortions inside the thought.",
             whyThisShape: "This version helps move from simple description toward cognitive pattern recognition.",
-            copyTip: "Do not fill the thinking-error column until the thought itself is written clearly."
+            copyTip: "Do not name the distortion before the actual thought is written clearly enough to test.",
+            layout: {
+              type: "table",
+              headers: ["Situation", "Automatic thought", "Emotion", "Intensity", "Thinking error", "Evidence review", "Alternative thought"],
+              rows: [
+                [
+                  "Team update",
+                  "If I pause, they will think I am weak",
+                  "Anxiety",
+                  "80/100",
+                  "Jumping to conclusions",
+                  "No one said that. Other people paused too.",
+                  "Pausing does not prove weakness."
+                ],
+                [
+                  "Clarification request",
+                  "One question means I explained badly",
+                  "Shame",
+                  "70/100",
+                  "Filtering",
+                  "The manager asked one neutral follow-up.",
+                  "A question can mean they want more detail, not that I failed."
+                ]
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
             type: "table",
-            headers: ["Situation", "Emotion", "Intensity", "Thought", "Thinking error", "Behavior"],
-            rows: [["Team update", "Anxiety", "80/100", "If I pause, they will think I am weak", "Jumping to conclusions", "Avoid speaking at length"]]
+            headers: ["Situation", "Automatic thought", "Emotion", "Intensity", "Thinking error", "Evidence review", "Alternative thought"],
+            rows: [
+              ["", "", "", "", "", "", ""],
+              ["", "", "", "", "", "", ""],
+              ["", "", "", "", "", "", ""]
+            ]
           }
         },
         {
@@ -510,36 +598,61 @@ const content: Record<AppLanguage, HubContent> = {
             title: "Worked example",
             caseContext: "The trainee starts from the thought: If I hesitate, they will judge me.",
             whyThisShape: "Each question pushes the meaning one step deeper until the underlying rule becomes visible.",
-            copyTip: "Keep one automatic thought at the top and let each next line answer the line before it."
+            copyTip: "Keep one automatic thought at the top and let every next line answer the line before it.",
+            layout: {
+              type: "form",
+              fields: [
+                { label: "Selected thought", value: "If I hesitate, they will judge me." },
+                { label: "If that were true, what would it mean?", value: "It would mean I am weak." },
+                { label: "And if you were weak, what would be the worst part?", value: "People would lose respect for me." },
+                { label: "If people lost respect, what would that say about you?", value: "I am not good enough." },
+                { label: "Belief hypothesis", value: "My worth depends on appearing strong." }
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
             type: "form",
             fields: [
-              { label: "Selected thought", value: "If I hesitate, they will judge me." },
-              { label: "What would that mean?", value: "It would mean I am weak." },
-              { label: "What is the worst part?", value: "They would lose respect." },
-              { label: "What does that say about me?", value: "I am not good enough." }
+              { label: "Selected thought", value: "____________________________" },
+              { label: "If that were true, what would it mean?", value: "____________________________" },
+              { label: "And if that were true, what is the worst part?", value: "____________________________" },
+              { label: "What would that say about you?", value: "____________________________" },
+              { label: "Belief hypothesis", value: "____________________________" }
             ]
           }
         },
         {
-          name: "Formulation sheet",
-          use: "To organize current problems, triggers, beliefs, and repeated patterns into one case map.",
-          includes: ["current problem", "triggers", "automatic thoughts", "emotions", "behavior", "intermediate beliefs", "core belief"],
+          name: "Cognitive formulation sheet",
+          use: "Use it when repeated examples are clear enough that you can connect the current problem, the triggers, the beliefs, and the maintaining pattern in one map.",
+          includes: ["current problem", "triggers", "automatic thoughts", "emotions/body", "behavior", "intermediate beliefs", "core beliefs", "maintaining cycle"],
           workedExample: {
             title: "Worked example",
             caseContext: "Repeated social situations now show the same pattern: criticism, shame, silence, and self-attack.",
             whyThisShape: "The sheet pulls repeated evidence into one map instead of leaving it scattered across notes.",
-            copyTip: "Only write links that appeared in more than one real example."
+            copyTip: "Only write links that appeared in more than one real example. Do not force a formulation from one incident.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "Current problem", lines: ["Anxiety and avoidance in meetings"] },
+                { title: "Triggers", lines: ["Unexpected request to speak", "Perceived criticism", "Being asked to clarify in front of others"] },
+                { title: "Automatic thoughts", lines: ["I will say something stupid", "They will notice I am weak"] },
+                { title: "Emotions and body", lines: ["Anxiety", "Shame", "Tight chest", "Racing heart"] },
+                { title: "Behaviors", lines: ["Speak briefly", "Avoid eye contact", "Ruminate after the meeting"] },
+                { title: "Beliefs", lines: ["Intermediate: If I am not strong, I should stay silent", "Core: I am not good enough"] },
+                { title: "Maintaining cycle", lines: ["Fear leads to avoidance", "Avoidance prevents disconfirmation", "Rumination strengthens the belief"] }
+              ]
+            }
           },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "Current problem", value: "anxiety in meetings" },
-              { label: "Trigger", value: "being asked to speak suddenly" },
-              { label: "Automatic thought", value: "I will say something stupid" },
-              { label: "Emotion / behavior", value: "anxiety and withdrawal" },
-              { label: "Belief hypothesis", value: "If I am not perfect, I am inadequate" }
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "Current problem", lines: ["________________________________________"] },
+              { title: "Triggers", lines: ["1. ____________________", "2. ____________________", "3. ____________________"] },
+              { title: "Automatic thoughts", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "Emotions and body", lines: ["________________________________________"] },
+              { title: "Behaviors", lines: ["________________________________________"] },
+              { title: "Beliefs", lines: ["Intermediate belief: ____________________", "Core belief: ____________________"] },
+              { title: "Maintaining cycle", lines: ["________________________________________"] }
             ]
           }
         },
@@ -551,36 +664,26 @@ const content: Record<AppLanguage, HubContent> = {
             title: "Worked example",
             caseContext: "The pattern is clear enough that the trainee now needs a realistic order of treatment targets.",
             whyThisShape: "The worksheet separates what should happen first from what can wait until later.",
-            copyTip: "Start with one priority problem only, then build the goal ladder under it."
+            copyTip: "Start with one priority problem only, then build the goal ladder beneath it.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "Priority problem", lines: ["Meeting anxiety and avoidance"] },
+                { title: "Immediate goals", lines: ["Identify automatic thoughts in real time", "Complete one record after meetings"] },
+                { title: "Medium-term goals", lines: ["Reduce avoidance in team discussions", "Practice balanced responses to criticism"] },
+                { title: "Long-term goals", lines: ["Speak in meetings with steadier confidence", "Tolerate evaluation without shutting down"] },
+                { title: "Starting techniques and homework", lines: ["Observation table with thinking errors", "Downward arrow on one repeated fear", "Homework: one completed worksheet after the next meeting"] }
+              ]
+            }
           },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "Priority problem", value: "meeting anxiety" },
-              { label: "Short-term goal", value: "identify automatic thoughts" },
-              { label: "Medium-term goal", value: "reduce avoidance" },
-              { label: "Long-term goal", value: "speak with steadier confidence" },
-              { label: "Starting tools", value: "monitoring table and thought record" }
-            ]
-          }
-        },
-        {
-          name: "Homework template",
-          use: "To make the between-session task specific, realistic, and reviewable.",
-          includes: ["one task only", "when to do it", "what to record", "what to bring back"],
-          workedExample: {
-            title: "Worked example",
-            caseContext: "The session ended with one clear next step after the next team update.",
-            whyThisShape: "This layout prevents vague homework by forcing one task, one cue, and one review item.",
-            copyTip: "If you cannot tell exactly when it will happen, the homework is still too broad."
-          },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "Task", value: "complete one thought record" },
-              { label: "When", value: "after the next team update" },
-              { label: "What to record", value: "situation, thought, emotion, balanced response" },
-              { label: "Bring back", value: "one filled sheet for review" }
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "Priority problem", lines: ["________________________________________"] },
+              { title: "Immediate goals", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "Medium-term goals", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "Long-term goals", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "Starting techniques and homework", lines: ["Techniques: ____________________", "Homework: ____________________"] }
             ]
           }
         }
@@ -988,35 +1091,93 @@ const content: Record<AppLanguage, HubContent> = {
       title: "النماذج والورقات المرجعية",
       items: [
         {
-          name: "جدول الرصد",
-          use: "لالتقاط الموقف والمشاعر والأفكار المسيطرة والسلوك ثم لاحقًا أخطاء التفكير.",
-          includes: ["الموقف", "المشاعر", "درجة الشعور", "الفكرة المسيطرة", "السلوك"],
+          name: "ورقة ملخص الحالة",
+          use: "استخدمها عندما تحتاج صفحة واحدة تلخّص العميل والشكوى الرئيسية والأهداف والاتجاه العلاجي الحالي.",
+          includes: ["صورة عامة للحالة", "الشكوى الرئيسية", "قائمة المشكلات", "الأهداف", "فرضيات المعتقد", "الفنيات الأولية", "الواجب الحالي"],
           workedExample: {
             title: "مثال مكتمل",
-            caseContext: "المتدرب يتتبع قلق الاجتماعات بعد أن طُلب منه تحديث سريع أمام الفريق.",
-            whyThisShape: "هذا الشكل يجبرك على موقف واحد محدد بدل تلخيص أسبوع كامل بشكل عام.",
-            copyTip: "استخدم الأعمدة نفسها واملأ سطرًا واحدًا فقط لكل موقف حقيقي."
+            caseContext: "أكمل المتدرب جلسات الاستكشاف الأولى ويحتاج الآن إلى صفحة واحدة تجمع الحالة قبل الدخول في العمل الأعمق.",
+            whyThisShape: "هذه الورقة ليست جدول رصد. هي ملخص منظم للحالة يمنع تشتت الملاحظات ويساعد على توجيه العمل.",
+            copyTip: "اجعل كل سطر مختصرًا ومفيدًا سريريًا. لا تحول الملخص إلى قصة طويلة.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "صورة عامة للحالة", lines: ["الاسم/الرمز: H.A.", "العمر: 29", "السياق: يعمل ضمن فريق في شركة"] },
+                { title: "الشكوى الرئيسية", lines: ["قلق شديد في الاجتماعات وخوف من التقييم السلبي"] },
+                { title: "المشكلات الحالية", lines: ["يتجنب الكلام", "يجتر بعد النقد", "ينسحب عندما يُطلب منه الشرح"] },
+                { title: "الأهداف", lines: ["فوري: تحديد الأفكار التلقائية في الاجتماعات", "متوسط: تقليل التجنب والهجوم على الذات", "بعيد: التحدث بثبات أكبر"] },
+                { title: "فرضيات المعتقد", lines: ["المعتقد الوسيط: إذا لم أبدُ قويًا فمن الأفضل أن أصمت", "المعتقد الجوهري: أنا لست جيدًا بما يكفي"] },
+                { title: "الفنيات الأولية والواجب", lines: ["جدول الرصد مع أخطاء التفكير", "واجب: سجل واحد بعد تحديث الفريق القادم"] }
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "صورة عامة للحالة", lines: ["الاسم/الرمز: __________", "العمر: __________", "السياق: __________"] },
+              { title: "الشكوى الرئيسية", lines: ["________________________________________"] },
+              { title: "المشكلات الحالية", lines: ["1. ____________________", "2. ____________________", "3. ____________________"] },
+              { title: "الأهداف", lines: ["فوري: ____________________", "متوسط: ____________________", "بعيد: ____________________"] },
+              { title: "فرضيات المعتقد", lines: ["المعتقد الوسيط: ____________________", "المعتقد الجوهري: ____________________"] },
+              { title: "الفنيات الأولية والواجب", lines: ["الفنيات: ____________________", "الواجب: ____________________"] }
+            ]
+          }
+        },
+        {
+          name: "جدول الرصد",
+          use: "استخدمه مبكرًا لالتقاط أكثر من موقف حقيقي قبل الانتقال إلى التفسير أو إعادة البناء المعرفي.",
+          includes: ["الموقف", "الفكرة التلقائية", "الشعور", "درجة الشعور", "السلوك", "ملاحظات"],
+          workedExample: {
+            title: "مثال مكتمل",
+            caseContext: "المتدرب ما زال يجمع المادة الخام ويحتاج ثلاثة أمثلة واضحة بدل شكاوى عامة.",
+            whyThisShape: "الجدول يبقي العمل مرتبطًا بمواقف قابلة للملاحظة. كل سطر يلتقط لحظة واحدة بدل قصة كاملة.",
+            copyTip: "اكتب مواقف قصيرة ومحددة. إذا تحول السطر إلى وصف عام للحياة، فهو لم يعد رصدًا جيدًا.",
+            layout: {
+              type: "table",
+              headers: ["الموقف", "الفكرة التلقائية", "الشعور", "الدرجة", "السلوك", "ملاحظات"],
+              rows: [
+                ["اجتماع تحديث الفريق", "سأبدو غير كفء", "قلق", "80/100", "تكلمت بسرعة ونظرت للأسفل", "بدأ القلق عندما طُلب التحديث فجأة"],
+                ["طلب المدير توضيحًا", "لاحظ أنني ضعيف", "خزي", "75/100", "اعتذرت بسرعة", "الفكرة ظهرت فورًا"],
+                ["قراءة البريد اللاحق", "غالبًا خيبتهم", "قلق", "60/100", "أخرت الرد ساعة", "بدأ الاجترار بعد الموقف"]
+              ]
+            }
+          },
+          blankTemplate: {
             type: "table",
-            headers: ["الموقف", "الشعور", "الدرجة", "الفكرة", "السلوك"],
-            rows: [["تحديث الفريق", "قلق", "80/100", "سأبدو غير كفء", "تكلمت بسرعة"]]
+            headers: ["الموقف", "الفكرة التلقائية", "الشعور", "الدرجة", "السلوك", "ملاحظات"],
+            rows: [
+              ["", "", "", "", "", ""],
+              ["", "", "", "", "", ""],
+              ["", "", "", "", "", ""]
+            ]
           }
         },
         {
           name: "جدول الرصد مع أخطاء التفكير",
-          use: "لمواصلة الرصد مع إضافة تسمية خطأ التفكير المحتمل في كل موقف.",
-          includes: ["الموقف", "المشاعر", "درجة الشعور", "الفكرة المسيطرة", "خطأ التفكير", "السلوك"],
+          use: "استخدمه عندما ينجح الرصد الأساسي وتريد الآن تسمية التشوه المحتمل والبدء في العمل المعرفي.",
+          includes: ["الموقف", "الفكرة التلقائية", "الشعور", "الدرجة", "خطأ التفكير", "مراجعة الأدلة", "الفكرة البديلة"],
           workedExample: {
             title: "مثال مكتمل",
             caseContext: "أصبح لدى المتدرب أمثلة رصد كافية وبدأ يتعلم كيف يحدد التشوه داخل الفكرة.",
             whyThisShape: "هذا الشكل ينقل العمل من الوصف فقط إلى التعرف على النمط المعرفي نفسه.",
-            copyTip: "لا تملأ خانة خطأ التفكير إلا بعد كتابة الفكرة نفسها بوضوح."
+            copyTip: "لا تسمِّ التشوه قبل أن تُكتب الفكرة نفسها بوضوح يكفي لاختبارها.",
+            layout: {
+              type: "table",
+              headers: ["الموقف", "الفكرة التلقائية", "الشعور", "الدرجة", "خطأ التفكير", "مراجعة الأدلة", "الفكرة البديلة"],
+              rows: [
+                ["تحديث الفريق", "إذا توقفت قليلًا فسيظنون أنني ضعيف", "قلق", "80/100", "القفز إلى الاستنتاجات", "لا أحد قال ذلك، وآخرون توقفوا أيضًا", "التوقف القصير لا يثبت الضعف"],
+                ["طلب توضيح", "سؤال واحد يعني أن شرحي كان سيئًا", "خزي", "70/100", "التصفية", "المدير سأل سؤال متابعة محايدًا", "قد يكون السؤال طلبًا لتفصيل لا دليلًا على الفشل"]
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
             type: "table",
-            headers: ["الموقف", "الشعور", "الدرجة", "الفكرة", "خطأ التفكير", "السلوك"],
-            rows: [["تحديث الفريق", "قلق", "80/100", "إذا توقفت قليلًا فسيظنون أنني ضعيف", "القفز إلى الاستنتاجات", "أتجنب الكلام المطول"]]
+            headers: ["الموقف", "الفكرة التلقائية", "الشعور", "الدرجة", "خطأ التفكير", "مراجعة الأدلة", "الفكرة البديلة"],
+            rows: [
+              ["", "", "", "", "", "", ""],
+              ["", "", "", "", "", "", ""],
+              ["", "", "", "", "", "", ""]
+            ]
           }
         },
         {
@@ -1027,36 +1188,61 @@ const content: Record<AppLanguage, HubContent> = {
             title: "مثال مكتمل",
             caseContext: "المتدرب يبدأ من فكرة: إذا ترددت فسيحكمون عليّ.",
             whyThisShape: "كل سؤال يدفع المعنى درجة أعمق حتى تظهر القاعدة أو المعتقد تحت الفكرة.",
-            copyTip: "ضع فكرة واحدة في الأعلى، ثم اجعل كل سطر يجيب السطر الذي قبله."
+            copyTip: "ضع فكرة واحدة في الأعلى، ثم اجعل كل سطر يجيب السطر الذي قبله.",
+            layout: {
+              type: "form",
+              fields: [
+                { label: "الفكرة المختارة", value: "إذا ترددت فسيحكمون عليّ" },
+                { label: "إذا كان ذلك صحيحًا، فماذا يعني؟", value: "يعني أنني ضعيف" },
+                { label: "وإذا كنت ضعيفًا، فما أسوأ جزء؟", value: "سيفقدون احترامهم لي" },
+                { label: "وإذا فقدوا احترامهم، فماذا يقول هذا عني؟", value: "أنني لست جيدًا بما يكفي" },
+                { label: "فرضية المعتقد", value: "قيمتي مرتبطة بأن أبدو قويًا" }
+              ]
+            }
           },
-          preview: {
+          blankTemplate: {
             type: "form",
             fields: [
-              { label: "الفكرة المختارة", value: "إذا ترددت فسيحكمون عليّ" },
-              { label: "ماذا يعني هذا لي؟", value: "يعني أنني ضعيف" },
-              { label: "ما أسوأ جزء؟", value: "سيفقدون احترامهم لي" },
-              { label: "ماذا يقول هذا عني؟", value: "أنني لست جيدًا بما يكفي" }
+              { label: "الفكرة المختارة", value: "____________________________" },
+              { label: "إذا كان ذلك صحيحًا، فماذا يعني؟", value: "____________________________" },
+              { label: "وإذا كان ذلك صحيحًا، فما أسوأ جزء؟", value: "____________________________" },
+              { label: "ماذا يقول هذا عني؟", value: "____________________________" },
+              { label: "فرضية المعتقد", value: "____________________________" }
             ]
           }
         },
         {
-          name: "ورقة الصياغة",
-          use: "لتنظيم المشكلة الحالية والمثيرات والمعتقدات والأنماط المتكررة في خريطة واحدة.",
-          includes: ["المشكلة الحالية", "العوامل المفجرة", "الأفكار التلقائية", "المشاعر", "السلوك", "المعتقدات الوسيطة", "المعتقد الجوهري"],
+          name: "ورقة الصياغة المعرفية",
+          use: "استخدمها عندما تصبح الأمثلة المتكررة واضحة بما يكفي لربط المشكلة الحالية والمثيرات والمعتقدات والدائرة المحافظة في خريطة واحدة.",
+          includes: ["المشكلة الحالية", "المثيرات", "الأفكار التلقائية", "المشاعر/الجسد", "السلوك", "المعتقدات الوسيطة", "المعتقدات الجوهرية", "الدائرة المحافظة"],
           workedExample: {
             title: "مثال مكتمل",
             caseContext: "عدة مواقف اجتماعية أظهرت النمط نفسه: نقد ثم خزي ثم صمت ثم هجوم على الذات.",
             whyThisShape: "الورقة تجمع الأدلة المتكررة في خريطة واحدة بدل أن تبقى متفرقة بين الملاحظات.",
-            copyTip: "لا تكتب رابطًا في الصياغة إلا إذا ظهر في أكثر من مثال حقيقي."
+            copyTip: "لا تكتب رابطًا في الصياغة إلا إذا ظهر في أكثر من مثال حقيقي. لا تفرض صياغة من موقف واحد.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "المشكلة الحالية", lines: ["قلق وتجنب في الاجتماعات"] },
+                { title: "المثيرات", lines: ["طلب مفاجئ للكلام", "إدراك نقد", "طلب توضيح أمام الآخرين"] },
+                { title: "الأفكار التلقائية", lines: ["سأقول شيئًا غبيًا", "سيلاحظون أنني ضعيف"] },
+                { title: "المشاعر والجسد", lines: ["قلق", "خزي", "ضيق في الصدر", "تسارع القلب"] },
+                { title: "السلوك", lines: ["الكلام المختصر", "تجنب النظر", "اجترار بعد الاجتماع"] },
+                { title: "المعتقدات", lines: ["المعتقد الوسيط: إذا لم أبدُ قويًا فمن الأفضل أن أصمت", "المعتقد الجوهري: أنا لست جيدًا بما يكفي"] },
+                { title: "الدائرة المحافظة", lines: ["الخوف يقود إلى التجنب", "التجنب يمنع التصحيح الواقعي", "الاجترار يقوي المعتقد"] }
+              ]
+            }
           },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "المشكلة الحالية", value: "قلق في الاجتماعات" },
-              { label: "العامل المفجر", value: "أن يُطلب مني الكلام فجأة" },
-              { label: "الفكرة التلقائية", value: "سأقول شيئًا غبيًا" },
-              { label: "المشاعر / السلوك", value: "قلق وانسحاب" },
-              { label: "فرضية المعتقد", value: "إذا لم أكن مثاليًا فأنا غير كفء" }
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "المشكلة الحالية", lines: ["________________________________________"] },
+              { title: "المثيرات", lines: ["1. ____________________", "2. ____________________", "3. ____________________"] },
+              { title: "الأفكار التلقائية", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "المشاعر والجسد", lines: ["________________________________________"] },
+              { title: "السلوك", lines: ["________________________________________"] },
+              { title: "المعتقدات", lines: ["المعتقد الوسيط: ____________________", "المعتقد الجوهري: ____________________"] },
+              { title: "الدائرة المحافظة", lines: ["________________________________________"] }
             ]
           }
         },
@@ -1068,36 +1254,26 @@ const content: Record<AppLanguage, HubContent> = {
             title: "مثال مكتمل",
             caseContext: "النمط أصبح واضحًا بما يكفي ليقرر المتدرب ما الذي يبدأ به أولًا.",
             whyThisShape: "الورقة تفصل بين ما يجب أن يبدأ الآن وما يمكن تأجيله إلى مراحل لاحقة.",
-            copyTip: "ابدأ بمشكلة أولوية واحدة فقط، ثم ابنِ تحتها درجات الأهداف."
+            copyTip: "ابدأ بمشكلة أولوية واحدة فقط، ثم ابنِ تحتها درجات الأهداف.",
+            layout: {
+              type: "sections",
+              sections: [
+                { title: "المشكلة ذات الأولوية", lines: ["قلق الاجتماعات والتجنب"] },
+                { title: "الأهداف الفورية", lines: ["تحديد الأفكار التلقائية في الوقت الحقيقي", "إكمال سجل واحد بعد الاجتماعات"] },
+                { title: "الأهداف متوسطة المدى", lines: ["تقليل التجنب في نقاشات الفريق", "التدرب على ردود أكثر توازنًا مع النقد"] },
+                { title: "الأهداف طويلة المدى", lines: ["التحدث بثبات أكبر في الاجتماعات", "تحمل التقييم دون انغلاق"] },
+                { title: "الفنيات الأولى والواجب", lines: ["جدول الرصد مع أخطاء التفكير", "السهم الهابط على خوف متكرر واحد", "واجب: ورقة واحدة مكتملة بعد الاجتماع القادم"] }
+              ]
+            }
           },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "المشكلة ذات الأولوية", value: "قلق الاجتماعات" },
-              { label: "هدف قصير المدى", value: "تحديد الأفكار التلقائية" },
-              { label: "هدف متوسط المدى", value: "تقليل التجنب" },
-              { label: "هدف طويل المدى", value: "التحدث بثبات أكبر" },
-              { label: "الفنيات الأولى", value: "جدول الرصد وسجل الأفكار" }
-            ]
-          }
-        },
-        {
-          name: "نموذج الواجب",
-          use: "لجعل الواجب محددًا وقابلًا للتنفيذ والمراجعة.",
-          includes: ["مهمة واحدة فقط", "متى تُنفذ", "ما الذي سيُسجل", "ما الذي سيُراجع في الجلسة القادمة"],
-          workedExample: {
-            title: "مثال مكتمل",
-            caseContext: "الجلسة انتهت بخطوة واحدة واضحة بعد تحديث الفريق القادم.",
-            whyThisShape: "هذا الشكل يمنع الواجب العام لأنه يفرض مهمة واحدة وموقفًا واضحًا وشيئًا محددًا للمراجعة.",
-            copyTip: "إذا لم تستطع تحديد متى سينفذ الواجب بالضبط، فهو ما زال واسعًا أكثر من اللازم."
-          },
-          preview: {
-            type: "form",
-            fields: [
-              { label: "المهمة", value: "أكمل سجل أفكار واحد" },
-              { label: "متى", value: "بعد تحديث الفريق القادم" },
-              { label: "ما الذي يُسجل", value: "الموقف، الفكرة، الشعور، الرد المتوازن" },
-              { label: "ما الذي سيعود للمراجعة", value: "ورقة واحدة مكتملة" }
+          blankTemplate: {
+            type: "sections",
+            sections: [
+              { title: "المشكلة ذات الأولوية", lines: ["________________________________________"] },
+              { title: "الأهداف الفورية", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "الأهداف متوسطة المدى", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "الأهداف طويلة المدى", lines: ["1. ____________________", "2. ____________________"] },
+              { title: "الفنيات الأولى والواجب", lines: ["الفنيات: ____________________", "الواجب: ____________________"] }
             ]
           }
         }

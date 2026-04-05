@@ -685,6 +685,12 @@ html[dir="rtl"] .reference-quickstart {
   background: #fcfdff;
 }
 
+.worksheet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .worksheet-includes {
   display: flex;
   flex-wrap: wrap;
@@ -728,12 +734,32 @@ html[dir="rtl"] .reference-quickstart {
   gap: 8px;
 }
 
+.worksheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
 .worksheet-form-line {
   padding: 10px 12px;
   border: 1px solid #d8dee4;
   border-radius: 10px;
   background: #fbfcfd;
   line-height: 1.5;
+}
+
+.worksheet-section-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.worksheet-section-card {
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  background: #fbfcfd;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
 }
 
 @media (max-width: 900px) {

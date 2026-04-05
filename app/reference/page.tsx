@@ -16,6 +16,141 @@ import {
   type ReferenceTabId
 } from "../../src/lib/i18n/reference-hub-operational";
 
+type WorksheetLayout =
+  | {
+      type: "table";
+      headers: string[];
+      rows: string[][];
+    }
+  | {
+      type: "form";
+      fields: Array<{
+        label: string;
+        value: string;
+      }>;
+    }
+  | {
+      type: "sections";
+      sections: Array<{
+        title: string;
+        lines: string[];
+      }>;
+    };
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function layoutToHtml(layout: WorksheetLayout) {
+  if (layout.type === "table") {
+    return `
+      <table>
+        <thead>
+          <tr>${layout.headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr>
+        </thead>
+        <tbody>
+          ${layout.rows
+            .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell || " ")}</td>`).join("")}</tr>`)
+            .join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  if (layout.type === "form") {
+    return `
+      <div class="form-grid">
+        ${layout.fields
+          .map(
+            (field) =>
+              `<div class="form-line"><strong>${escapeHtml(field.label)}:</strong> ${escapeHtml(field.value || "________________")}</div>`
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="section-grid">
+      ${layout.sections
+        .map(
+          (section) => `
+            <section class="section-card">
+              <h3>${escapeHtml(section.title)}</h3>
+              <ul>${section.lines.map((line) => `<li>${escapeHtml(line || "________________")}</li>`).join("")}</ul>
+            </section>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderWorksheetLayout(layout?: WorksheetLayout) {
+  if (!layout) {
+    return null;
+  }
+
+  if (layout.type === "table") {
+    return (
+      <div className="worksheet-table-wrap">
+        <table className="worksheet-table">
+          <thead>
+            <tr>
+              {layout.headers.map((header) => (
+                <th key={header}>{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {layout.rows.map((row, rowIndex) => (
+              <tr key={`worksheet-row-${rowIndex}`}>
+                {row.map((cell, cellIndex) => (
+                  <td key={`worksheet-cell-${rowIndex}-${cellIndex}`}>{cell || "\u00A0"}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (layout.type === "form") {
+    return (
+      <div className="worksheet-form-preview">
+        {layout.fields.map((field) => (
+          <div key={`${field.label}-${field.value}`} className="worksheet-form-line">
+            <strong>{field.label}:</strong> {field.value}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="worksheet-section-grid">
+      {layout.sections.map((section) => (
+        <article key={section.title} className="worksheet-section-card">
+          <strong>{section.title}</strong>
+          <div className="list">
+            {section.lines.map((line) => (
+              <div key={`${section.title}-${line}`} className="list-item">
+                {line}
+              </div>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 export default function ReferenceHubPage() {
   const { language, t } = useLanguage();
   const alignment = getReferenceHubAlignment(language);
@@ -101,6 +236,83 @@ export default function ReferenceHubPage() {
     ],
     [content.goals.items, language]
   );
+  const selectedWorksheet = content.worksheets.items[selectedWorksheetIndex];
+
+  const worksheetDocumentHtml = useMemo(() => {
+    if (!selectedWorksheet) {
+      return "";
+    }
+
+    const title = escapeHtml(selectedWorksheet.name);
+    const useText = escapeHtml(selectedWorksheet.use);
+    const includes = selectedWorksheet.includes.map((entry) => `<li>${escapeHtml(entry)}</li>`).join("");
+
+    return `<!doctype html>
+      <html lang="${language === "ar" ? "ar" : "en"}" dir="${language === "ar" ? "rtl" : "ltr"}">
+        <head>
+          <meta charset="utf-8" />
+          <title>${title}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 32px; color: #16202a; }
+            h1, h2, h3 { margin: 0 0 12px; }
+            p, li { line-height: 1.6; }
+            .sheet { margin-top: 24px; border: 1px solid #d8dee4; border-radius: 12px; padding: 18px; }
+            .meta { margin-bottom: 20px; }
+            .form-grid, .section-grid { display: grid; gap: 12px; }
+            .form-line, .section-card { border: 1px solid #d8dee4; border-radius: 10px; padding: 12px; background: #fbfcfd; }
+            table { width: 100%; border-collapse: collapse; font-size: 14px; }
+            th, td { border: 1px solid #d8dee4; padding: 8px 10px; text-align: start; vertical-align: top; }
+            th { background: #f8fbff; }
+          </style>
+        </head>
+        <body>
+          <h1>${title}</h1>
+          <div class="meta">
+            <p>${useText}</p>
+            <ul>${includes}</ul>
+          </div>
+          <div class="sheet">
+            <h2>${escapeHtml(selectedWorksheet.workedExample.title)}</h2>
+            <p><strong>${escapeHtml(language === "ar" ? "سياق الحالة" : "Case context")}:</strong> ${escapeHtml(selectedWorksheet.workedExample.caseContext)}</p>
+            <p><strong>${escapeHtml(language === "ar" ? "لماذا هذا الشكل" : "Why this shape")}:</strong> ${escapeHtml(selectedWorksheet.workedExample.whyThisShape)}</p>
+            <p><strong>${escapeHtml(language === "ar" ? "كيف تقلده" : "How to copy it")}:</strong> ${escapeHtml(selectedWorksheet.workedExample.copyTip)}</p>
+            ${layoutToHtml(selectedWorksheet.workedExample.layout as WorksheetLayout)}
+          </div>
+          <div class="sheet">
+            <h2>${escapeHtml(language === "ar" ? "النسخة الفارغة" : "Blank template")}</h2>
+            ${layoutToHtml(selectedWorksheet.blankTemplate as WorksheetLayout)}
+          </div>
+        </body>
+      </html>`;
+  }, [language, selectedWorksheet]);
+
+  function openWorksheetDocument(mode: "print" | "download") {
+    if (!selectedWorksheet || !worksheetDocumentHtml) {
+      return;
+    }
+
+    if (mode === "download") {
+      const blob = new Blob([worksheetDocumentHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `${selectedWorksheet.name.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "") || "worksheet"}.html`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    const popup = window.open("", "_blank", "noopener,noreferrer,width=980,height=760");
+    if (!popup) {
+      return;
+    }
+
+    popup.document.open();
+    popup.document.write(worksheetDocumentHtml);
+    popup.document.close();
+    popup.focus();
+    popup.print();
+  }
 
   const tabPanels = useMemo<Record<ReferenceTabId, React.ReactNode>>(
     () => ({
@@ -487,16 +699,25 @@ export default function ReferenceHubPage() {
                 <div className="stack">
                   <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
                     <div className="stack" style={{ gap: 6 }}>
-                      <h4 style={{ margin: 0 }}>{content.worksheets.items[selectedWorksheetIndex]?.name}</h4>
+                      <h4 style={{ margin: 0 }}>{selectedWorksheet?.name}</h4>
                       <p className="muted" style={{ margin: 0 }}>
-                        {content.worksheets.items[selectedWorksheetIndex]?.use}
+                        {selectedWorksheet?.use}
                       </p>
                     </div>
                     <span className="badge">{language === "ar" ? "مرجع عملي" : "Practical reference"}</span>
                   </div>
 
+                  <div className="worksheet-actions">
+                    <button type="button" onClick={() => openWorksheetDocument("print")}>
+                      {language === "ar" ? "طباعة الورقة" : "Print worksheet"}
+                    </button>
+                    <button type="button" className="secondary" onClick={() => openWorksheetDocument("download")}>
+                      {language === "ar" ? "تنزيل HTML" : "Download HTML"}
+                    </button>
+                  </div>
+
                   <div className="worksheet-includes">
-                    {content.worksheets.items[selectedWorksheetIndex]?.includes.map((entry) => (
+                    {selectedWorksheet?.includes.map((entry) => (
                       <span key={entry} className="badge">
                         {entry}
                       </span>
@@ -505,60 +726,36 @@ export default function ReferenceHubPage() {
 
                   <div className="detail-callout">
                     <div className="worksheet-preview-title">
-                      {content.worksheets.items[selectedWorksheetIndex]?.workedExample.title}
+                      {selectedWorksheet?.workedExample.title}
                     </div>
                     <p>
                       <strong>{language === "ar" ? "سياق الحالة:" : "Case context:"}</strong>{" "}
-                      {content.worksheets.items[selectedWorksheetIndex]?.workedExample.caseContext}
+                      {selectedWorksheet?.workedExample.caseContext}
                     </p>
                     <p>
                       <strong>{language === "ar" ? "لماذا هذا الشكل؟" : "Why this shape:"}</strong>{" "}
-                      {content.worksheets.items[selectedWorksheetIndex]?.workedExample.whyThisShape}
+                      {selectedWorksheet?.workedExample.whyThisShape}
                     </p>
                     <p>
                       <strong>{language === "ar" ? "كيف تقلده؟" : "How to copy it:"}</strong>{" "}
-                      {content.worksheets.items[selectedWorksheetIndex]?.workedExample.copyTip}
+                      {selectedWorksheet?.workedExample.copyTip}
                     </p>
                   </div>
 
-                  <div className="worksheet-preview large">
-                    <div className="worksheet-preview-title">
-                      {language === "ar" ? "شكل النموذج المتوقع" : "Expected worksheet structure"}
+                  <div className="worksheet-grid">
+                    <div className="worksheet-preview large">
+                      <div className="worksheet-preview-title">
+                        {language === "ar" ? "مثال مكتمل" : "Worked example"}
+                      </div>
+                      {renderWorksheetLayout(selectedWorksheet?.workedExample.layout as WorksheetLayout)}
                     </div>
-                    {content.worksheets.items[selectedWorksheetIndex]?.preview.type === "table" ? (
-                      <div className="worksheet-table-wrap">
-                        <table className="worksheet-table">
-                          <thead>
-                            <tr>
-                              {content.worksheets.items[selectedWorksheetIndex]?.preview.headers?.map((header) => (
-                                <th key={header}>{header}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {content.worksheets.items[selectedWorksheetIndex]?.preview.rows?.map((row, rowIndex) => (
-                              <tr key={`${content.worksheets.items[selectedWorksheetIndex]?.name}-${rowIndex}`}>
-                                {row.map((cell, cellIndex) => (
-                                  <td
-                                    key={`${content.worksheets.items[selectedWorksheetIndex]?.name}-${rowIndex}-${cellIndex}`}
-                                  >
-                                    {cell}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+
+                    <div className="worksheet-preview large">
+                      <div className="worksheet-preview-title">
+                        {language === "ar" ? "النسخة الفارغة" : "Blank template"}
                       </div>
-                    ) : (
-                      <div className="worksheet-form-preview">
-                        {content.worksheets.items[selectedWorksheetIndex]?.preview.fields?.map((field) => (
-                          <div key={`${field.label}-${field.value}`} className="worksheet-form-line">
-                            <strong>{field.label}:</strong> {field.value}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                      {renderWorksheetLayout(selectedWorksheet?.blankTemplate as WorksheetLayout)}
+                    </div>
                   </div>
 
                 </div>
@@ -670,6 +867,7 @@ export default function ReferenceHubPage() {
       content,
       explorationStages,
       language,
+      selectedWorksheet,
       operational,
       selectedDistortionIndex,
       selectedToolIndex,
