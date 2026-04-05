@@ -13,16 +13,16 @@ const devFallbackEmails = [
   "trainee.two@example.com",
   "facilitator@example.com"
 ];
-const MAGIC_LINK_COOLDOWN_SECONDS = 60;
-const MAGIC_LINK_COOLDOWN_KEY = "cbt-magic-link-cooldown-until";
 
 export default function LoginPage() {
   const { language, setLanguage, t, translateServerText } = useLanguage();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [cooldownSecondsLeft, setCooldownSecondsLeft] = useState(0);
   const supabase = useMemo(
     () => (hasSupabaseAuth ? createSupabaseBrowserClient() : null),
     []
@@ -35,53 +35,8 @@ export default function LoginPage() {
     }
   }, [language, t]);
 
-  useEffect(() => {
-    if (!hasSupabaseAuth) {
-      return;
-    }
-
-    const storedUntil = window.localStorage.getItem(MAGIC_LINK_COOLDOWN_KEY);
-    if (!storedUntil) {
-      return;
-    }
-
-    const remainingMs = Number(storedUntil) - Date.now();
-    if (remainingMs <= 0) {
-      window.localStorage.removeItem(MAGIC_LINK_COOLDOWN_KEY);
-      return;
-    }
-
-    setCooldownSecondsLeft(Math.ceil(remainingMs / 1000));
-  }, []);
-
-  useEffect(() => {
-    if (cooldownSecondsLeft <= 0) {
-      if (hasSupabaseAuth) {
-        window.localStorage.removeItem(MAGIC_LINK_COOLDOWN_KEY);
-      }
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setCooldownSecondsLeft((current) => {
-        if (current <= 1) {
-          window.clearInterval(timer);
-          return 0;
-        }
-
-        return current - 1;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [cooldownSecondsLeft]);
-
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (cooldownSecondsLeft > 0) {
-      setError(t(language, "magicLinkCooldownActive", cooldownSecondsLeft));
-      return;
-    }
 
     setIsLoading(true);
     setError("");
@@ -89,25 +44,46 @@ export default function LoginPage() {
 
     try {
       if (hasSupabaseAuth && supabase) {
-        const { error: signInError } = await supabase.auth.signInWithOtp({
-          email: email.trim().toLowerCase(),
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
-          }
-        });
+        if (mode === "signin") {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: email.trim().toLowerCase(),
+            password
+          });
 
-        if (signInError) {
-          setError(signInError.message);
+          if (signInError) {
+            setError(signInError.message);
+            setIsLoading(false);
+            return;
+          }
+
+          window.location.href = "/reference";
           setIsLoading(false);
           return;
         }
 
-        setSuccess(t(language, "magicLinkSent"));
-        setCooldownSecondsLeft(MAGIC_LINK_COOLDOWN_SECONDS);
-        window.localStorage.setItem(
-          MAGIC_LINK_COOLDOWN_KEY,
-          String(Date.now() + MAGIC_LINK_COOLDOWN_SECONDS * 1000)
-        );
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email: email.trim().toLowerCase(),
+          password,
+          options: {
+            data: {
+              name: name.trim() || email.trim().split("@")[0]
+            }
+          }
+        });
+
+        if (signUpError) {
+          setError(signUpError.message);
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.session) {
+          window.location.href = "/reference";
+          setIsLoading(false);
+          return;
+        }
+
+        setSuccess(t(language, "signupNeedsEmailConfig"));
         setIsLoading(false);
         return;
       }
@@ -151,7 +127,11 @@ export default function LoginPage() {
         <div>
           <h1>{t(language, "loginTitle")}</h1>
           <p className="muted">
-            {hasSupabaseAuth ? t(language, "loginMagicLinkSubtitle") : t(language, "loginDevFallbackSubtitle")}
+            {hasSupabaseAuth
+              ? mode === "signin"
+                ? t(language, "loginPasswordSubtitle")
+                : t(language, "signupPasswordSubtitle")
+              : t(language, "loginDevFallbackSubtitle")}
           </p>
         </div>
 
@@ -174,7 +154,41 @@ export default function LoginPage() {
           </div>
         ) : null}
 
+        {hasSupabaseAuth ? (
+          <div className="row" style={{ gap: 10 }}>
+            <button
+              type="button"
+              className={mode === "signin" ? undefined : "secondary"}
+              onClick={() => {
+                setMode("signin");
+                setError("");
+                setSuccess("");
+              }}
+            >
+              {t(language, "signIn")}
+            </button>
+            <button
+              type="button"
+              className={mode === "signup" ? undefined : "secondary"}
+              onClick={() => {
+                setMode("signup");
+                setError("");
+                setSuccess("");
+              }}
+            >
+              {t(language, "createAccount")}
+            </button>
+          </div>
+        ) : null}
+
         <form className="stack" onSubmit={handleLogin}>
+          {hasSupabaseAuth && mode === "signup" ? (
+            <label className="field">
+              <span>{t(language, "fullName")}</span>
+              <input value={name} onChange={(event) => setName(event.target.value)} placeholder={t(language, "fullNamePlaceholder")} />
+            </label>
+          ) : null}
+
           <label className="field">
             <span>{t(language, "email")}</span>
             <input
@@ -185,23 +199,29 @@ export default function LoginPage() {
             />
           </label>
 
-          {error ? <div className="error">{translateServerText(error)}</div> : null}
-          {success ? <div className="success">{success}</div> : null}
-          {hasSupabaseAuth && cooldownSecondsLeft > 0 ? (
-            <div className="callout callout-advisory stack">
-              <strong>{t(language, "magicLinkCheckInboxTitle")}</strong>
-              <div className="muted">{t(language, "magicLinkCooldownNotice", cooldownSecondsLeft)}</div>
-              <div className="muted">{t(language, "magicLinkDeliveryHelp")}</div>
-            </div>
+          {hasSupabaseAuth ? (
+            <label className="field">
+              <span>{t(language, "password")}</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="••••••••"
+              />
+            </label>
           ) : null}
 
-          <button type="submit" disabled={isLoading || cooldownSecondsLeft > 0}>
+          {error ? <div className="error">{translateServerText(error)}</div> : null}
+          {success ? <div className="success">{success}</div> : null}
+          {hasSupabaseAuth ? <div className="muted">{t(language, "passwordAuthNote")}</div> : null}
+
+          <button type="submit" disabled={isLoading}>
             {isLoading
               ? t(language, "signingIn")
-              : cooldownSecondsLeft > 0
-                ? t(language, "magicLinkResendIn", cooldownSecondsLeft)
               : hasSupabaseAuth
-                ? t(language, "sendMagicLink")
+                ? mode === "signin"
+                  ? t(language, "signIn")
+                  : t(language, "createAccount")
                 : t(language, "signIn")}
           </button>
         </form>
