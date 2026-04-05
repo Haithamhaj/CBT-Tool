@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { EmotionWheel } from "../../src/components/emotion-wheel";
 import { HelpTip } from "../../src/components/help-tip";
@@ -273,14 +272,6 @@ export default function ReferenceHubPage() {
                         <p><strong>{language === "ar" ? "المخرج المتوقع:" : "Expected output:"}</strong> {tool.miniCase.expectedOutput}</p>
                       </div>
 
-                      <div className="reference-link-row">
-                        <Link href="/practice/setup" className="reference-link-chip">
-                          {language === "ar" ? "استخدمها في إعداد الممارسة" : "Use in Practice Setup"}
-                        </Link>
-                        <Link href="/sessions" className="reference-link-chip secondary">
-                          {language === "ar" ? "ارجع إلى الجلسات" : "Return to Sessions"}
-                        </Link>
-                      </div>
                     </div>
                   );
                 })()}
@@ -472,14 +463,6 @@ export default function ReferenceHubPage() {
                     )}
                   </div>
 
-                  <div className="reference-link-row">
-                    <Link href="/practice/setup" className="reference-link-chip">
-                      {language === "ar" ? "ابدأ تدريبًا بهذا المرجع" : "Start practice with this reference"}
-                    </Link>
-                    <Link href="/sessions" className="reference-link-chip secondary">
-                      {language === "ar" ? "اكمل جلسة سابقة" : "Resume a prior session"}
-                    </Link>
-                  </div>
                 </div>
               </section>
             </div>
@@ -576,19 +559,10 @@ export default function ReferenceHubPage() {
 
       <div className="panel stack">
         <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-          <h2>{language === "ar" ? "اختصارات الاستخدام السريع" : "Most-used shortcuts"}</h2>
-          <span className="badge">{language === "ar" ? "للرجوع السريع" : "For quick return"}</span>
+          <h2>{language === "ar" ? "الأقسام الأكثر استخدامًا" : "Most-used sections"}</h2>
+          <span className="badge">{language === "ar" ? "للوصول السريع" : "For quick access"}</span>
         </div>
         <div className="reference-link-row">
-          <Link href="/practice/setup" className="reference-link-chip">
-            {language === "ar" ? "إعداد الممارسة" : "Practice Setup"}
-          </Link>
-          <Link href="/sessions" className="reference-link-chip">
-            {language === "ar" ? "الجلسات" : "Sessions"}
-          </Link>
-          <Link href="/progress" className="reference-link-chip">
-            {language === "ar" ? "التقدم" : "Progress"}
-          </Link>
           {shortcutTabs.map((tabId) => (
             <button
               key={tabId}

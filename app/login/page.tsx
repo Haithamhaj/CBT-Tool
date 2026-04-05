@@ -71,7 +71,7 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = "/practice/setup";
+      window.location.href = "/reference";
     } catch (submissionError) {
       setError(
         submissionError instanceof Error

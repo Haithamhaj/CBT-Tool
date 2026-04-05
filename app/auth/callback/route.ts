@@ -3,7 +3,7 @@ import { createSupabaseRouteHandlerClient } from "../../../src/lib/supabase/serv
 import { isSupabaseConfigured } from "../../../src/lib/supabase/env";
 
 export async function GET(request: NextRequest) {
-  const redirectUrl = new URL("/practice/setup", request.url);
+  const redirectUrl = new URL("/reference", request.url);
   const loginUrl = new URL("/login", request.url);
   const code = request.nextUrl.searchParams.get("code");
 
