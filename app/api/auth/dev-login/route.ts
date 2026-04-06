@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAppRepository } from "../../../../src/lib/app/repository-provider";
 import { DEV_SESSION_COOKIE } from "../../../../src/lib/auth/constants";
-import { isSupabaseConfigured } from "../../../../src/lib/supabase/env";
+import { isPreviewAccessEnabled } from "../../../../src/lib/supabase/env";
 
 export async function POST(request: NextRequest) {
-  if (isSupabaseConfigured()) {
-    return NextResponse.json({ error: "Development fallback login is disabled when Supabase Auth is configured." }, { status: 400 });
+  if (!isPreviewAccessEnabled()) {
+    return NextResponse.json({ error: "Preview access login is disabled in this environment." }, { status: 400 });
   }
 
   const body = (await request.json()) as { email?: string };

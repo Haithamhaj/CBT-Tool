@@ -7,8 +7,12 @@ import { createSupabaseBrowserClient } from "../../src/lib/supabase/browser";
 const hasSupabaseAuth =
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+const previewAccessEnabled =
+  !hasSupabaseAuth || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
 const devFallbackEmails = [
+  "advancedhaitham.haj@gmail.com",
+  "haitham.haj@gmail.com",
   "trainee.one@example.com",
   "trainee.two@example.com",
   "facilitator@example.com"
@@ -34,6 +38,37 @@ export default function LoginPage() {
       setError(t(language, "authCallbackFailed"));
     }
   }, [language, t]);
+
+  async function handlePreviewAccessLogin() {
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch("/api/auth/dev-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      const body = await response.json();
+      if (!response.ok) {
+        setError(translateServerText(body.error ?? "Unable to sign in."));
+        setIsLoading(false);
+        return;
+      }
+
+      window.location.href = "/reference";
+    } catch (submissionError) {
+      setError(
+        submissionError instanceof Error
+          ? submissionError.message
+          : t(language, "errorUnableStartSession")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -88,20 +123,7 @@ export default function LoginPage() {
         return;
       }
 
-      const response = await fetch("/api/auth/dev-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
-
-      const body = await response.json();
-      if (!response.ok) {
-        setError(translateServerText(body.error ?? "Unable to sign in."));
-        setIsLoading(false);
-        return;
-      }
-
-      window.location.href = "/reference";
+      await handlePreviewAccessLogin();
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
@@ -135,10 +157,12 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {!hasSupabaseAuth ? (
+        {previewAccessEnabled ? (
           <div className="callout callout-advisory stack">
-            <strong>{t(language, "devFallbackMode")}</strong>
-            <div className="muted">{t(language, "devFallbackHint")}</div>
+            <strong>{t(language, hasSupabaseAuth ? "previewAccessMode" : "devFallbackMode")}</strong>
+            <div className="muted">
+              {t(language, hasSupabaseAuth ? "previewAccessHint" : "devFallbackHint")}
+            </div>
             <div className="emotion-chips">
               {devFallbackEmails.map((fallbackEmail) => (
                 <button
@@ -214,6 +238,17 @@ export default function LoginPage() {
           {error ? <div className="error">{translateServerText(error)}</div> : null}
           {success ? <div className="success">{success}</div> : null}
           {hasSupabaseAuth ? <div className="muted">{t(language, "passwordAuthNote")}</div> : null}
+
+          {previewAccessEnabled ? (
+            <button
+              type="button"
+              className="secondary"
+              onClick={handlePreviewAccessLogin}
+              disabled={isLoading || email.trim().length === 0}
+            >
+              {t(language, "previewAccessButton")}
+            </button>
+          ) : null}
 
           <button type="submit" disabled={isLoading}>
             {isLoading
