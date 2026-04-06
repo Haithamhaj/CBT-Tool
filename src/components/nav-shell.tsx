@@ -12,6 +12,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/reference", label: t(language, "navReferenceHub") },
+    { href: "/lectures", label: t(language, "navLectures") },
     ...(currentUser.role === "facilitator" ? [{ href: "/admin", label: t(language, "navAdmin") }] : [])
   ];
 

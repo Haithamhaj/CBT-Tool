@@ -1017,3 +1017,138 @@ html[dir="rtl"] .reference-quickstart {
     position: static;
   }
 }
+
+.lecture-page {
+  max-width: 1040px;
+}
+
+.lecture-hero,
+.lecture-header {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.lecture-title {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.lecture-meta-grid,
+.lecture-list-grid,
+.lecture-group-grid,
+.lecture-misconception-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.lecture-meta-card,
+.lecture-list-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lecture-list-card {
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lecture-list-card:hover {
+  border-color: #9bb7d3;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.lecture-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lecture-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lecture-body-section {
+  gap: 18px;
+}
+
+.lecture-markdown {
+  line-height: 1.9;
+  font-size: 16px;
+}
+
+.lecture-markdown h2,
+.lecture-markdown h3,
+.lecture-markdown h4 {
+  margin-top: 28px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.lecture-markdown p,
+.lecture-markdown li {
+  margin: 0 0 12px;
+}
+
+.lecture-markdown ul,
+.lecture-markdown ol {
+  padding-inline-start: 24px;
+}
+
+.lecture-markdown blockquote {
+  margin: 0;
+  padding: 14px 16px;
+  border-inline-start: 4px solid #8db0d4;
+  background: #f8fbff;
+  border-radius: 10px;
+}
+
+.lecture-markdown strong {
+  color: #12253a;
+}
+
+.lecture-block-section {
+  gap: 16px;
+}
+
+.lecture-comparison-stack,
+.lecture-criteria-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lecture-distinction-card {
+  padding: 18px;
+}
+
+.lecture-distinction-grid,
+.lecture-comparison-row,
+.lecture-comparison-header {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.lecture-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lecture-comparison-cell {
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .lecture-distinction-grid,
+  .lecture-comparison-row,
+  .lecture-comparison-header {
+    grid-template-columns: 1fr;
+  }
+}
