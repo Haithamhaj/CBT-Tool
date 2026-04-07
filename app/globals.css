@@ -1070,6 +1070,29 @@ html[dir="rtl"] .reference-quickstart {
   gap: 10px;
 }
 
+.lecture-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.lecture-action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #16202a;
+  color: white;
+  text-decoration: none;
+}
+
+.lecture-action-link:hover {
+  opacity: 0.92;
+}
+
 .lecture-body-section {
   gap: 18px;
 }
@@ -1150,5 +1173,44 @@ html[dir="rtl"] .reference-quickstart {
   .lecture-comparison-row,
   .lecture-comparison-header {
     grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .shell {
+    display: block;
+  }
+
+  .sidebar,
+  .print-hidden {
+    display: none !important;
+  }
+
+  .content,
+  .page,
+  .lecture-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .panel {
+    box-shadow: none;
+    border: 1px solid #d8dee4;
+    break-inside: avoid;
+  }
+
+  .lecture-body-section,
+  .lecture-block-section {
+    break-inside: auto;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 }

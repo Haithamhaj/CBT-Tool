@@ -71,11 +71,14 @@ export default async function LectureDetailPage({ params }: { params: Promise<{ 
         lecture={lecture}
         contentTypeLabel={t(language, contentTypeLabelKey[lecture.contentType])}
         contentLanguageLabel={lecture.contentLanguage === "ar" ? t(language, "languageArabic") : t(language, "languageEnglish")}
+        downloadHref={`/lectures/${lecture.slug}/download`}
         labels={{
           lectureNumber: t(language, "lectureNumberLabel"),
           realTopic: t(language, "lectureLabelRealTopic"),
           centralMessage: t(language, "lectureLabelCentralMessage"),
-          whyImportant: t(language, "lectureLabelWhyImportant")
+          whyImportant: t(language, "lectureLabelWhyImportant"),
+          print: t(language, "lectureActionPrint"),
+          download: t(language, "lectureActionDownload")
         }}
       />
 

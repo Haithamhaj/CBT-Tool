@@ -1,18 +1,22 @@
+import { LectureActions } from "./lecture-actions";
 import type { Lecture } from "../../lib/content/lectures";
 
 type LectureHeaderProps = {
   lecture: Lecture;
   contentTypeLabel: string;
   contentLanguageLabel: string;
+  downloadHref: string;
   labels: {
     lectureNumber: string;
     realTopic: string;
     centralMessage: string;
     whyImportant: string;
+    print: string;
+    download: string;
   };
 };
 
-export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel, labels }: LectureHeaderProps) {
+export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel, downloadHref, labels }: LectureHeaderProps) {
   return (
     <header className="panel lecture-header stack">
       <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -27,6 +31,12 @@ export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel,
           <span className="badge">{contentLanguageLabel}</span>
         </div>
       </div>
+
+      <LectureActions
+        printLabel={labels.print}
+        downloadLabel={labels.download}
+        downloadHref={downloadHref}
+      />
 
       <div className="lecture-meta-grid">
         <article className="lecture-meta-card">
