@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { requireCurrentSessionUser } from "../../src/lib/app/runtime-auth";
 import { getAdminDashboardData } from "../../src/lib/app/admin-dashboard";
+import { getAnalyticsDashboardData, getLectureInventoryData } from "../../src/lib/app/analytics-dashboard";
+import { requireCurrentSessionUser } from "../../src/lib/app/runtime-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +21,29 @@ export default async function AdminPage() {
     notFound();
   }
 
-  let data;
-  let error: string | null = null;
+  let legacyData;
+  let analyticsData;
+  let lectureInventory;
+  let legacyError: string | null = null;
+  let analyticsError: string | null = null;
+  let lecturesError: string | null = null;
 
   try {
-    data = await getAdminDashboardData();
+    legacyData = await getAdminDashboardData();
   } catch (cause) {
-    error = cause instanceof Error ? cause.message : "Unable to load admin data.";
+    legacyError = cause instanceof Error ? cause.message : "Unable to load legacy admin data.";
+  }
+
+  try {
+    analyticsData = await getAnalyticsDashboardData();
+  } catch (cause) {
+    analyticsError = cause instanceof Error ? cause.message : "Unable to load analytics data.";
+  }
+
+  try {
+    lectureInventory = await getLectureInventoryData();
+  } catch (cause) {
+    lecturesError = cause instanceof Error ? cause.message : "Unable to load lecture inventory.";
   }
 
   return (
@@ -37,26 +54,228 @@ export default async function AdminPage() {
             <div>
               <h1 style={{ marginBottom: 8 }}>Admin Overview</h1>
               <p className="muted" style={{ margin: 0 }}>
-                Read-only visibility into the remaining database records and legacy training data.
+                Read-only visibility into content coverage, visitor usage signals, and any remaining legacy database records.
               </p>
             </div>
             <span className="badge authority-badge">Facilitator only</span>
           </div>
         </section>
 
-        {error ? (
+        {analyticsError ? (
           <section className="panel stack">
-            <h2 style={{ marginBottom: 0 }}>Database unavailable</h2>
+            <h2 style={{ marginBottom: 0 }}>Analytics unavailable</h2>
             <p className="muted" style={{ margin: 0 }}>
-              {error}
+              {analyticsError}
             </p>
           </section>
         ) : null}
 
-        {data ? (
+        {lecturesError ? (
+          <section className="panel stack">
+            <h2 style={{ marginBottom: 0 }}>Lecture inventory unavailable</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              {lecturesError}
+            </p>
+          </section>
+        ) : null}
+
+        {analyticsData ? (
           <>
+            <section className="panel stack">
+              <div>
+                <h2 style={{ marginBottom: 8 }}>Usage overview</h2>
+                <p className="muted" style={{ margin: 0 }}>
+                  Lightweight analytics from content page views plus lecture PDF and print interactions.
+                </p>
+              </div>
+              <section className="reference-card-grid">
+                <article className="reference-card">
+                  <strong>Total visits (7d)</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{analyticsData.usage.totalVisits7d}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Unique visitors (7d)</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{analyticsData.usage.uniqueVisitors7d}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Lecture visits (7d)</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{analyticsData.usage.lectureVisits7d}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Reference visits (7d)</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{analyticsData.usage.referenceVisits7d}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>PDF opens (7d)</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{analyticsData.usage.pdfOpens7d}</div>
+                </article>
+              </section>
+            </section>
+
             <section className="reference-card-grid">
-              {data.counts.map((item) => (
+              <article className="panel stack">
+                <h2 style={{ marginBottom: 0 }}>Top pages</h2>
+                <div className="worksheet-table-wrap">
+                  <table className="worksheet-table">
+                    <thead>
+                      <tr>
+                        <th>Route</th>
+                        <th>Visits</th>
+                        <th>Unique visitors</th>
+                        <th>Last visit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analyticsData.topRoutes.length ? (
+                        analyticsData.topRoutes.map((route) => (
+                          <tr key={route.route}>
+                            <td>{route.route}</td>
+                            <td>{route.visits}</td>
+                            <td>{route.unique_visitors}</td>
+                            <td>{formatDate(route.last_visit)}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4}>No analytics data yet.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+
+              <article className="panel stack">
+                <h2 style={{ marginBottom: 0 }}>Top lectures</h2>
+                <div className="worksheet-table-wrap">
+                  <table className="worksheet-table">
+                    <thead>
+                      <tr>
+                        <th>Lecture</th>
+                        <th>Views</th>
+                        <th>PDF opens</th>
+                        <th>Last visit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analyticsData.topLectures.length ? (
+                        analyticsData.topLectures.map((lecture) => (
+                          <tr key={lecture.lecture_slug}>
+                            <td>{lecture.title}</td>
+                            <td>{lecture.visits}</td>
+                            <td>{lecture.pdf_opens}</td>
+                            <td>{formatDate(lecture.last_visit)}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4}>No lecture analytics yet.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </section>
+          </>
+        ) : null}
+
+        {lectureInventory ? (
+          <>
+            <section className="panel stack">
+              <div>
+                <h2 style={{ marginBottom: 8 }}>Lectures inventory</h2>
+                <p className="muted" style={{ margin: 0 }}>
+                  Current lecture corpus coverage and how much structured support exists around the primary text.
+                </p>
+              </div>
+              <section className="reference-card-grid">
+                <article className="reference-card">
+                  <strong>Published lectures</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{lectureInventory.totalPublished}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Rich support lectures</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{lectureInventory.richSupportCount}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Body-first lectures</strong>
+                  <div style={{ fontSize: 28, fontWeight: 700 }}>{lectureInventory.bodyOnlyCount}</div>
+                </article>
+                <article className="reference-card">
+                  <strong>Missing lecture numbers</strong>
+                  <div style={{ fontSize: 20, fontWeight: 700 }}>
+                    {lectureInventory.missingLectureNumbers.length ? lectureInventory.missingLectureNumbers.join(", ") : "None"}
+                  </div>
+                </article>
+              </section>
+              <div className="lecture-chip-group">
+                {Object.entries(lectureInventory.byContentType).map(([contentType, count]) => (
+                  <span key={contentType} className="badge">
+                    {contentType}: {count}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <section className="panel stack">
+              <h2 style={{ marginBottom: 0 }}>Lecture coverage table</h2>
+              <div className="worksheet-table-wrap">
+                <table className="worksheet-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Type</th>
+                      <th>Tags</th>
+                      <th>Concepts</th>
+                      <th>Warnings</th>
+                      <th>Visuals</th>
+                      <th>Recap</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lectureInventory.lectures.map((lecture) => (
+                      <tr key={lecture.lectureNumber}>
+                        <td>{lecture.lectureNumber}</td>
+                        <td>{lecture.title}</td>
+                        <td>{lecture.contentType}</td>
+                        <td>{lecture.tagsCount}</td>
+                        <td>{lecture.hasConcepts ? "Yes" : "No"}</td>
+                        <td>{lecture.hasWarnings ? "Yes" : "No"}</td>
+                        <td>{lecture.hasVisuals ? "Yes" : "No"}</td>
+                        <td>{lecture.hasRecap ? "Yes" : "No"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </>
+        ) : null}
+
+        {legacyError ? (
+          <section className="panel stack">
+            <h2 style={{ marginBottom: 0 }}>Legacy database unavailable</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              {legacyError}
+            </p>
+          </section>
+        ) : null}
+
+        {legacyData ? (
+          <>
+            <section className="panel stack">
+              <div>
+                <h2 style={{ marginBottom: 8 }}>Legacy database activity</h2>
+                <p className="muted" style={{ margin: 0 }}>
+                  Historical training records remain visible here, but they are no longer the primary product signal.
+                </p>
+              </div>
+            </section>
+
+            <section className="reference-card-grid">
+              {legacyData.counts.map((item) => (
                 <article key={item.table} className="reference-card">
                   <strong>{item.table}</strong>
                   <div style={{ fontSize: 28, fontWeight: 700 }}>{item.count}</div>
@@ -78,7 +297,7 @@ export default async function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.recentUsers.map((user) => (
+                    {legacyData.recentUsers.map((user) => (
                       <tr key={user.id}>
                         <td>{user.email}</td>
                         <td>{user.name}</td>
@@ -108,7 +327,7 @@ export default async function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.recentSessions.map((session) => (
+                    {legacyData.recentSessions.map((session) => (
                       <tr key={session.id}>
                         <td>{session.user_email}</td>
                         <td>{session.case_title}</td>
@@ -138,7 +357,7 @@ export default async function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.recentAttempts.map((attempt) => (
+                      {legacyData.recentAttempts.map((attempt) => (
                         <tr key={attempt.id}>
                           <td>{attempt.session_id}</td>
                           <td>{attempt.revision_number}</td>
@@ -165,7 +384,7 @@ export default async function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.recentDrifts.map((drift) => (
+                      {legacyData.recentDrifts.map((drift) => (
                         <tr key={drift.id}>
                           <td>{drift.name}</td>
                           <td>{drift.severity}</td>
@@ -194,7 +413,7 @@ export default async function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.recentProgress.map((snapshot) => (
+                    {legacyData.recentProgress.map((snapshot) => (
                       <tr key={snapshot.id}>
                         <td>{snapshot.user_email}</td>
                         <td>{snapshot.date}</td>

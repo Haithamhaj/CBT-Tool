@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { RouteAnalyticsTracker } from "./analytics/route-analytics-tracker";
 import { useRuntimeAuth } from "./runtime-auth-provider";
 import { useLanguage } from "./language-provider";
 
@@ -23,6 +24,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="shell">
+      <RouteAnalyticsTracker />
       <aside className="sidebar">
         <div className="brand">
           <strong>{t(language, "appTitle")}</strong>

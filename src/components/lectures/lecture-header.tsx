@@ -32,7 +32,14 @@ export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel,
         </div>
       </div>
 
-      {pdfHref ? <LectureActions printLabel={labels.print} pdfLabel={labels.pdf} pdfHref={pdfHref} /> : null}
+      {pdfHref ? (
+        <LectureActions
+          printLabel={labels.print}
+          pdfLabel={labels.pdf}
+          pdfHref={pdfHref}
+          lectureSlug={lecture.slug}
+        />
+      ) : null}
 
       <div className="lecture-meta-grid">
         <article className="lecture-meta-card">
