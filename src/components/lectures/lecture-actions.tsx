@@ -2,18 +2,18 @@
 
 type LectureActionsProps = {
   printLabel: string;
-  downloadLabel: string;
-  downloadHref: string;
+  pdfLabel: string;
+  pdfHref: string;
 };
 
-export function LectureActions({ printLabel, downloadLabel, downloadHref }: LectureActionsProps) {
+export function LectureActions({ printLabel, pdfLabel, pdfHref }: LectureActionsProps) {
   return (
     <div className="lecture-action-row print-hidden">
       <button type="button" className="secondary" onClick={() => window.print()}>
         {printLabel}
       </button>
-      <a href={downloadHref} className="lecture-action-link">
-        {downloadLabel}
+      <a href={pdfHref} target="_blank" rel="noreferrer" className="lecture-action-link">
+        {pdfLabel}
       </a>
     </div>
   );

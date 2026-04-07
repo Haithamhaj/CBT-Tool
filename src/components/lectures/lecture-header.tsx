@@ -5,18 +5,18 @@ type LectureHeaderProps = {
   lecture: Lecture;
   contentTypeLabel: string;
   contentLanguageLabel: string;
-  downloadHref: string;
+  pdfHref?: string;
   labels: {
     lectureNumber: string;
     realTopic: string;
     centralMessage: string;
     whyImportant: string;
     print: string;
-    download: string;
+    pdf: string;
   };
 };
 
-export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel, downloadHref, labels }: LectureHeaderProps) {
+export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel, pdfHref, labels }: LectureHeaderProps) {
   return (
     <header className="panel lecture-header stack">
       <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -32,11 +32,7 @@ export function LectureHeader({ lecture, contentTypeLabel, contentLanguageLabel,
         </div>
       </div>
 
-      <LectureActions
-        printLabel={labels.print}
-        downloadLabel={labels.download}
-        downloadHref={downloadHref}
-      />
+      {pdfHref ? <LectureActions printLabel={labels.print} pdfLabel={labels.pdf} pdfHref={pdfHref} /> : null}
 
       <div className="lecture-meta-grid">
         <article className="lecture-meta-card">

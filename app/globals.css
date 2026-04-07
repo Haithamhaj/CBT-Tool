@@ -1027,6 +1027,11 @@ html[dir="rtl"] .reference-quickstart {
   background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
 }
 
+.lecture-pdf-banner {
+  background: linear-gradient(180deg, #fffaf0 0%, #ffffff 100%);
+  border-color: #e6d9b8;
+}
+
 .lecture-title {
   margin: 0;
   line-height: 1.2;
@@ -1196,6 +1201,10 @@ html[dir="rtl"] .reference-quickstart {
     max-width: none;
     margin: 0;
     padding: 0;
+  }
+
+  .lecture-pdf-page {
+    max-width: none;
   }
 
   .panel {
