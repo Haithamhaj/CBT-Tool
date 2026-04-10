@@ -262,7 +262,7 @@ export default function LoginPage() {
             />
           </label>
 
-          {(!emailOnlyAuthEnabled && appManagedAuthEnabled) || hasSupabaseAuth ? (
+          {(sharedPasswordAuthEnabled || (!appManagedAuthEnabled && hasSupabaseAuth)) ? (
             <label className="field">
               <span>{t(language, "password")}</span>
               <input
