@@ -27,23 +27,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [magicLinkCooldown, setMagicLinkCooldown] = useState(0);
   const supabase = useMemo(
     () => (hasSupabaseAuth ? createSupabaseBrowserClient() : null),
     []
   );
-
-  useEffect(() => {
-    if (magicLinkCooldown <= 0) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setMagicLinkCooldown((current) => Math.max(0, current - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timer);
-  }, [magicLinkCooldown]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -51,43 +38,6 @@ export default function LoginPage() {
       setError(t(language, "authCallbackFailed"));
     }
   }, [language, t]);
-
-  async function handleMagicLinkLogin() {
-    if (!hasSupabaseAuth || !supabase || magicLinkCooldown > 0) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-    setSuccess("");
-
-    try {
-      const redirectTo = `${window.location.origin}/auth/callback`;
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: email.trim().toLowerCase(),
-        options: {
-          emailRedirectTo: redirectTo
-        }
-      });
-
-      if (otpError) {
-        setError(translateServerText(otpError.message));
-        setIsLoading(false);
-        return;
-      }
-
-      setMagicLinkCooldown(60);
-      setSuccess(t(language, "magicLinkSent"));
-    } catch (submissionError) {
-      setError(
-        submissionError instanceof Error
-          ? submissionError.message
-          : t(language, "errorUnableStartSession")
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   async function handlePreviewAccessLogin() {
     setIsLoading(true);
@@ -288,28 +238,6 @@ export default function LoginPage() {
           {error ? <div className="error">{translateServerText(error)}</div> : null}
           {success ? <div className="success">{success}</div> : null}
           {hasSupabaseAuth ? <div className="muted">{t(language, "passwordAuthNote")}</div> : null}
-
-          {hasSupabaseAuth && mode === "signin" ? (
-            <div className="callout callout-official stack">
-              <strong>{t(language, "magicLinkCheckInboxTitle")}</strong>
-              <div className="muted">{t(language, "loginMagicLinkSubtitle")}</div>
-              <div className="muted">
-                {magicLinkCooldown > 0
-                  ? t(language, "magicLinkCooldownActive", magicLinkCooldown)
-                  : t(language, "magicLinkDeliveryHelp")}
-              </div>
-              <button
-                type="button"
-                className="secondary"
-                onClick={handleMagicLinkLogin}
-                disabled={isLoading || email.trim().length === 0 || magicLinkCooldown > 0}
-              >
-                {magicLinkCooldown > 0
-                  ? t(language, "magicLinkResendIn", magicLinkCooldown)
-                  : t(language, "sendMagicLink")}
-              </button>
-            </div>
-          ) : null}
 
           {previewAccessEnabled ? (
             <button
