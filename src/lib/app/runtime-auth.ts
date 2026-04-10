@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import type { User } from "../../contracts";
 import { DEV_SESSION_COOKIE } from "../auth/constants";
 import { createSupabaseServerComponentClient } from "../supabase/server";
-import { isPreviewAccessEnabled, isSharedPasswordAuthEnabled, isSupabaseConfigured } from "../supabase/env";
+import { isAppManagedAuthEnabled, isPreviewAccessEnabled, isSupabaseConfigured } from "../supabase/env";
 import { getAppRepository } from "./repository-provider";
 
 function defaultDisplayName(authUser: SupabaseAuthUser) {
@@ -52,7 +52,7 @@ async function getDevSessionUser(): Promise<User | null> {
 }
 
 export async function getCurrentSessionUser(): Promise<User | null> {
-  if (isSharedPasswordAuthEnabled()) {
+  if (isAppManagedAuthEnabled()) {
     return getDevSessionUser();
   }
 

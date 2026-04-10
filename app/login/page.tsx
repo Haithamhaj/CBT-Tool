@@ -4,12 +4,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../src/components/language-provider";
 import { createSupabaseBrowserClient } from "../../src/lib/supabase/browser";
 
-const sharedPasswordAuthEnabled = process.env.NEXT_PUBLIC_APP_AUTH_MODE === "shared-password";
+const appAuthMode =
+  process.env.NEXT_PUBLIC_APP_AUTH_MODE === "shared-password" || process.env.NEXT_PUBLIC_APP_AUTH_MODE === "email-only"
+    ? process.env.NEXT_PUBLIC_APP_AUTH_MODE
+    : null;
+const appManagedAuthEnabled = appAuthMode !== null;
+const sharedPasswordAuthEnabled = appAuthMode === "shared-password";
+const emailOnlyAuthEnabled = appAuthMode === "email-only";
 const hasSupabaseAuth =
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 const previewAccessEnabled =
-  !sharedPasswordAuthEnabled && (!hasSupabaseAuth || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview");
+  !appManagedAuthEnabled && (!hasSupabaseAuth || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview");
 
 const devFallbackEmails = [
   "advancedhaitham.haj@gmail.com",
@@ -79,7 +85,7 @@ export default function LoginPage() {
     setSuccess("");
 
     try {
-      if (sharedPasswordAuthEnabled) {
+      if (appManagedAuthEnabled) {
         const endpoint = mode === "signin" ? "/api/auth/app-login" : "/api/auth/app-signup";
         const response = await fetch(endpoint, {
           method: "POST",
@@ -174,7 +180,11 @@ export default function LoginPage() {
         <div>
           <h1>{t(language, "loginTitle")}</h1>
           <p className="muted">
-            {sharedPasswordAuthEnabled
+            {emailOnlyAuthEnabled
+              ? mode === "signin"
+                ? t(language, "loginEmailOnlySubtitle")
+                : t(language, "signupEmailOnlySubtitle")
+              : sharedPasswordAuthEnabled
               ? mode === "signin"
                 ? t(language, "loginSharedPasswordSubtitle")
                 : t(language, "signupSharedPasswordSubtitle")
@@ -207,7 +217,7 @@ export default function LoginPage() {
           </div>
         ) : null}
 
-        {sharedPasswordAuthEnabled || hasSupabaseAuth ? (
+        {appManagedAuthEnabled || hasSupabaseAuth ? (
           <div className="row" style={{ gap: 10 }}>
             <button
               type="button"
@@ -235,7 +245,7 @@ export default function LoginPage() {
         ) : null}
 
         <form className="stack" onSubmit={handleLogin}>
-          {(sharedPasswordAuthEnabled || hasSupabaseAuth) && mode === "signup" ? (
+          {(appManagedAuthEnabled || hasSupabaseAuth) && mode === "signup" ? (
             <label className="field">
               <span>{t(language, "fullName")}</span>
               <input value={name} onChange={(event) => setName(event.target.value)} placeholder={t(language, "fullNamePlaceholder")} />
@@ -252,7 +262,7 @@ export default function LoginPage() {
             />
           </label>
 
-          {sharedPasswordAuthEnabled || hasSupabaseAuth ? (
+          {(!emailOnlyAuthEnabled && appManagedAuthEnabled) || hasSupabaseAuth ? (
             <label className="field">
               <span>{t(language, "password")}</span>
               <input
@@ -266,8 +276,9 @@ export default function LoginPage() {
 
           {error ? <div className="error">{translateServerText(error)}</div> : null}
           {success ? <div className="success">{success}</div> : null}
+          {emailOnlyAuthEnabled ? <div className="muted">{t(language, "emailOnlyAuthNote")}</div> : null}
           {sharedPasswordAuthEnabled ? <div className="muted">{t(language, "sharedPasswordAuthNote")}</div> : null}
-          {!sharedPasswordAuthEnabled && hasSupabaseAuth ? <div className="muted">{t(language, "passwordAuthNote")}</div> : null}
+          {!appManagedAuthEnabled && hasSupabaseAuth ? <div className="muted">{t(language, "passwordAuthNote")}</div> : null}
 
           {previewAccessEnabled ? (
             <button
@@ -283,7 +294,7 @@ export default function LoginPage() {
           <button type="submit" disabled={isLoading}>
             {isLoading
               ? t(language, "signingIn")
-              : sharedPasswordAuthEnabled || hasSupabaseAuth
+              : appManagedAuthEnabled || hasSupabaseAuth
                 ? mode === "signin"
                   ? t(language, "signIn")
                   : t(language, "createAccount")

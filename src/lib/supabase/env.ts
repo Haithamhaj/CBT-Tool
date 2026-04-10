@@ -3,8 +3,21 @@ export const SUPABASE_ENV_KEYS = {
   anonKey: "NEXT_PUBLIC_SUPABASE_ANON_KEY"
 } as const;
 
+export function getAppAuthMode() {
+  const value = process.env.NEXT_PUBLIC_APP_AUTH_MODE;
+  return value === "shared-password" || value === "email-only" ? value : null;
+}
+
+export function isAppManagedAuthEnabled() {
+  return getAppAuthMode() !== null;
+}
+
 export function isSharedPasswordAuthEnabled() {
-  return process.env.NEXT_PUBLIC_APP_AUTH_MODE === "shared-password";
+  return getAppAuthMode() === "shared-password";
+}
+
+export function isEmailOnlyAuthEnabled() {
+  return getAppAuthMode() === "email-only";
 }
 
 export function requireAppAccessPassword() {

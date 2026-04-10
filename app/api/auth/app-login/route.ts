@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAppRepository } from "../../../../src/lib/app/repository-provider";
 import { DEV_SESSION_COOKIE } from "../../../../src/lib/auth/constants";
-import { isSharedPasswordAuthEnabled, requireAppAccessPassword } from "../../../../src/lib/supabase/env";
+import { getAppAuthMode, isAppManagedAuthEnabled, requireAppAccessPassword } from "../../../../src/lib/supabase/env";
 
 export async function POST(request: NextRequest) {
-  if (!isSharedPasswordAuthEnabled()) {
-    return NextResponse.json({ error: "Shared access login is disabled." }, { status: 400 });
+  const authMode = getAppAuthMode();
+  if (!isAppManagedAuthEnabled()) {
+    return NextResponse.json({ error: "App-managed login is disabled." }, { status: 400 });
   }
 
   const body = (await request.json()) as { email?: string; password?: string };
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Email is required." }, { status: 400 });
   }
 
-  if (password !== requireAppAccessPassword()) {
+  if (authMode === "shared-password" && password !== requireAppAccessPassword()) {
     return NextResponse.json({ error: "Invalid access password." }, { status: 401 });
   }
 
