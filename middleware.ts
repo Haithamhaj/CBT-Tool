@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { DEV_SESSION_COOKIE } from "./src/lib/auth/constants";
 import { createSupabaseMiddlewareClient } from "./src/lib/supabase/server";
-import { isPreviewAccessEnabled, isSupabaseConfigured } from "./src/lib/supabase/env";
+import { isPreviewAccessEnabled, isSharedPasswordAuthEnabled, isSupabaseConfigured } from "./src/lib/supabase/env";
 
 function isPublicPath(pathname: string) {
   return (
@@ -17,6 +17,25 @@ function isPublicPath(pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasDevSession = Boolean(request.cookies.get(DEV_SESSION_COOKIE)?.value);
+
+  if (isSharedPasswordAuthEnabled()) {
+    if (pathname === "/login") {
+      if (hasDevSession) {
+        return NextResponse.redirect(new URL("/reference", request.url));
+      }
+      return NextResponse.next();
+    }
+
+    if (isPublicPath(pathname)) {
+      return NextResponse.next();
+    }
+
+    if (!hasDevSession) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    return NextResponse.next();
+  }
 
   if (pathname === "/login") {
     if (!isSupabaseConfigured()) {
