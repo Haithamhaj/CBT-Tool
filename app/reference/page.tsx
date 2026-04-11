@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { EmotionWheel } from "../../src/components/emotion-wheel";
 import { HelpTip } from "../../src/components/help-tip";
@@ -11,6 +12,7 @@ import { SequenceDiagram } from "../../src/components/reference/sequence-diagram
 import { SessionStageMap } from "../../src/components/reference/session-stage-map";
 import { getReferenceHubAlignment } from "../../src/lib/i18n/reference-hub-alignment";
 import { getReferenceHubContent } from "../../src/lib/i18n/reference-hub-content";
+import { getSessionRoadmapContent } from "../../src/lib/i18n/session-roadmap-content";
 import {
   getReferenceHubOperationalContent,
   type ReferenceTabId
@@ -160,6 +162,7 @@ export default function ReferenceHubPage() {
   const { language, t } = useLanguage();
   const alignment = getReferenceHubAlignment(language);
   const content = getReferenceHubContent(language);
+  const roadmapContent = getSessionRoadmapContent(language);
   const operational = getReferenceHubOperationalContent(language);
   const [activeTab, setActiveTab] = useState<ReferenceTabId>("overview");
   const [selectedToolIndex, setSelectedToolIndex] = useState(0);
@@ -479,6 +482,13 @@ export default function ReferenceHubPage() {
           <div className="panel stack">
             <h3>{content.fiveSessionMap.title}</h3>
             <p className="muted">{content.fiveSessionMap.intro}</p>
+            <div className="callout callout-advisory">
+              <strong>{roadmapContent.referenceCtaLabel}</strong>
+              <p>{roadmapContent.referenceCtaHint}</p>
+              <Link href="/reference/5-sessions" className="lecture-action-link reference-cta-link">
+                {roadmapContent.referenceCtaLabel}
+              </Link>
+            </div>
             <div className="reference-sequence">
               {content.fiveSessionMap.items.map((item, index) => (
                 <article key={item.session} className="reference-sequence-card">

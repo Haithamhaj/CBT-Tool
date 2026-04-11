@@ -1140,6 +1140,10 @@ html[dir="rtl"] .reference-quickstart {
   opacity: 0.92;
 }
 
+.reference-cta-link {
+  margin-top: 12px;
+}
+
 .lecture-body-section {
   gap: 18px;
 }
@@ -1215,11 +1219,151 @@ html[dir="rtl"] .reference-quickstart {
   background: #fff;
 }
 
+.session-roadmap-page {
+  max-width: 1180px;
+}
+
+.session-roadmap-hero {
+  background:
+    radial-gradient(circle at top right, rgba(141, 176, 212, 0.24), transparent 32%),
+    linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+}
+
+.session-roadmap-toolbar {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.session-roadmap-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.session-roadmap-timeline-card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #d8dee4;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.session-roadmap-stage-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #16202a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.session-roadmap-card {
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.9) 0%, #ffffff 100%);
+}
+
+.session-roadmap-card.status-inProgress,
+.session-roadmap-timeline-card.status-inProgress {
+  border-color: #cfd9a9;
+  box-shadow: inset 0 0 0 1px rgba(191, 164, 88, 0.22);
+}
+
+.session-roadmap-card.status-completed,
+.session-roadmap-timeline-card.status-completed {
+  border-color: #a7c4ab;
+  box-shadow: inset 0 0 0 1px rgba(61, 118, 76, 0.18);
+}
+
+.session-roadmap-status-block {
+  min-width: 170px;
+  padding: 12px 14px;
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  background: #fbfcfd;
+  display: grid;
+  gap: 4px;
+}
+
+.session-roadmap-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.session-roadmap-detail-card {
+  display: grid;
+  gap: 12px;
+}
+
+.session-roadmap-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.session-roadmap-meta-grid p {
+  margin: 8px 0 0;
+}
+
+.session-roadmap-checklist-card {
+  background: #f9fbfd;
+}
+
+.session-roadmap-checklist {
+  display: grid;
+  gap: 10px;
+}
+
+.session-roadmap-check {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid #d8dee4;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.session-roadmap-check input {
+  margin-top: 3px;
+}
+
+.session-roadmap-check.checked {
+  background: #f2f8f2;
+  border-color: #bcd1bf;
+}
+
 @media (max-width: 900px) {
   .lecture-distinction-grid,
   .lecture-comparison-row,
   .lecture-comparison-header {
     grid-template-columns: 1fr;
+  }
+
+  .session-roadmap-detail-grid,
+  .session-roadmap-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .session-roadmap-toolbar {
+    flex-direction: column;
+  }
+
+  .session-roadmap-timeline-card {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .session-roadmap-stage-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
   }
 }
 
@@ -1239,13 +1383,15 @@ html[dir="rtl"] .reference-quickstart {
 
   .content,
   .page,
-  .lecture-page {
+  .lecture-page,
+  .session-roadmap-page {
     max-width: none;
     margin: 0;
     padding: 0;
   }
 
-  .lecture-pdf-page {
+  .lecture-pdf-page,
+  .session-roadmap-page {
     max-width: none;
   }
 
@@ -1256,8 +1402,19 @@ html[dir="rtl"] .reference-quickstart {
   }
 
   .lecture-body-section,
-  .lecture-block-section {
+  .lecture-block-section,
+  .session-roadmap-checklist-card,
+  .session-roadmap-card {
     break-inside: auto;
+  }
+
+  .session-roadmap-timeline {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .session-roadmap-card,
+  .session-roadmap-timeline-card {
+    box-shadow: none;
   }
 
   a {

@@ -5,10 +5,13 @@ type SimpleItem = {
   text: string;
 };
 
-type SessionMapItem = {
+export type SessionMapItem = {
   session: string;
   purpose: string;
   tools: string[];
+  tasks: string[];
+  milestones: string[];
+  checklistItems: string[];
   homework: string;
   output: string;
 };
@@ -208,6 +211,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "Session 1",
           purpose: "Know the client, clarify the present complaint, and explain the CBT method.",
           tools: ["Psychoeducation", "Observation table"],
+          tasks: [
+            "Define the current complaint in plain, concrete language.",
+            "Give a brief CBT frame so the trainee understands the structure of the work.",
+            "Capture one recent situation worth monitoring instead of staying broad."
+          ],
+          milestones: [
+            "The complaint is stated in one sentence.",
+            "The trainee can explain why monitoring is the first step.",
+            "A first observation example is ready."
+          ],
+          checklistItems: [
+            "I named the presenting complaint clearly.",
+            "I explained the CBT method briefly and simply.",
+            "I selected one recent situation to monitor.",
+            "I assigned the first observation task."
+          ],
           homework: "Start the observation table after relevant situations.",
           output: "Clear current complaint, early timeline, and first monitoring task."
         },
@@ -215,6 +234,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "Session 2",
           purpose: "Review homework, identify triggering factors, and deepen the picture of thoughts and feelings.",
           tools: ["Observation table review", "Trigger exploration"],
+          tasks: [
+            "Review what was actually monitored, not what was intended.",
+            "Identify the trigger or activating situation with better precision.",
+            "Separate thoughts, feelings, and behavior around the problem."
+          ],
+          milestones: [
+            "Triggers are clearer than in session 1.",
+            "Repeated emotional reactions are visible.",
+            "The case picture is less vague and less mixed."
+          ],
+          checklistItems: [
+            "I reviewed the previous monitoring material.",
+            "I identified the main trigger or activating situation.",
+            "I separated thought, emotion, and behavior.",
+            "I asked for more detailed monitoring next."
+          ],
           homework: "Continue monitoring with better detail.",
           output: "Better map of triggers, repeated reactions, and emotional patterns."
         },
@@ -222,6 +257,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "Session 3",
           purpose: "Teach cognitive distortions and help the client start labeling them in their own records.",
           tools: ["Cognitive distortions list", "Observation table with thinking-error column"],
+          tasks: [
+            "Introduce the most relevant distortions using the trainee's own examples.",
+            "Link each label to one real monitored thought.",
+            "Correct naming without turning the session into memorization."
+          ],
+          milestones: [
+            "At least one distortion is matched to a real thought.",
+            "The trainee can distinguish label from evidence.",
+            "Monitoring now includes a thinking-error column."
+          ],
+          checklistItems: [
+            "I explained the relevant distortion in simple language.",
+            "I linked the distortion to a real session example.",
+            "I added the thinking-error column to the record.",
+            "I assigned homework to keep labeling distortions."
+          ],
           homework: "Complete the table and mark likely distortions.",
           output: "Named thinking errors tied to real examples."
         },
@@ -229,6 +280,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "Session 4",
           purpose: "Work from automatic thoughts toward deeper beliefs and motivation for change.",
           tools: ["Downward arrow", "Belief exploration"],
+          tasks: [
+            "Start from one clear automatic thought rather than a broad theme.",
+            "Use guided questions to reach deeper meaning and rules.",
+            "Connect the belief work to why change matters now."
+          ],
+          milestones: [
+            "One belief hypothesis is stated cautiously.",
+            "The link between surface thought and deeper meaning is visible.",
+            "Motivation for change becomes easier to name."
+          ],
+          checklistItems: [
+            "I selected one automatic thought as the starting point.",
+            "I used guided questions to explore deeper meaning.",
+            "I kept deeper beliefs as working hypotheses.",
+            "I linked the session to the cost of staying the same."
+          ],
           homework: "Reflect on what the problem costs and what change would protect.",
           output: "Early intermediate/core belief hypotheses."
         },
@@ -236,6 +303,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "Session 5",
           purpose: "Collect repeated patterns and agree a treatment direction with the client.",
           tools: ["Pattern summary", "Treatment plan"],
+          tasks: [
+            "Summarize the repeated pattern across the previous sessions.",
+            "Name the priority problems instead of treating everything at once.",
+            "Translate the pattern into an initial treatment direction."
+          ],
+          milestones: [
+            "A working formulation is visible.",
+            "Priority problems are ranked.",
+            "The first treatment target is agreed."
+          ],
+          checklistItems: [
+            "I summarized the repeated pattern across sessions.",
+            "I named the priority problems clearly.",
+            "I agreed an initial treatment direction.",
+            "I assigned the first targeted treatment task."
+          ],
           homework: "Begin the first targeted treatment task.",
           output: "Working formulation, priority problems, and treatment start point."
         }
@@ -815,6 +898,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "الجلسة الأولى",
           purpose: "التعرف على العميل، وتوضيح الشكوى الحالية، وشرح طريقة العلاج المعرفي السلوكي.",
           tools: ["التعليم النفسي", "جدول الرصد"],
+          tasks: [
+            "صياغة الشكوى الحالية بلغة واضحة ومحددة.",
+            "شرح إطار CBT بشكل مختصر حتى يفهم المتدرب لماذا سنعمل بهذه البنية.",
+            "التقاط موقف حديث واحد يصلح للرصد بدل الكلام العام."
+          ],
+          milestones: [
+            "تمت تسمية الشكوى في جملة واحدة.",
+            "أصبح سبب البدء بالرصد واضحًا للمتدرب.",
+            "يوجد مثال أولي جاهز للرصد."
+          ],
+          checklistItems: [
+            "سمّيت الشكوى الحالية بوضوح.",
+            "شرحت طريقة CBT بشكل مختصر وبسيط.",
+            "حددت موقفًا حديثًا واحدًا للرصد.",
+            "حددت أول واجب للرصد."
+          ],
           homework: "بدء جدول الرصد بعد المواقف المهمة.",
           output: "شكوى حالية واضحة، وبداية صورة زمنية للمشكلة، وأول واجب للرصد."
         },
@@ -822,6 +921,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "الجلسة الثانية",
           purpose: "مراجعة الواجب، وتحديد العامل المفجر، وتعميق صورة الأفكار والمشاعر.",
           tools: ["مراجعة جدول الرصد", "استكشاف العامل المفجر"],
+          tasks: [
+            "مراجعة ما تم رصده فعليًا لا ما كان مفترضًا فقط.",
+            "تحديد الموقف المفجر أو المنشط بدقة أعلى.",
+            "فصل الأفكار عن المشاعر والسلوك حول المشكلة."
+          ],
+          milestones: [
+            "أصبحت المثيرات أوضح من الجلسة الأولى.",
+            "ظهر النمط الانفعالي المتكرر بشكل أفضل.",
+            "أصبحت صورة الحالة أقل غموضًا وأقل اختلاطًا."
+          ],
+          checklistItems: [
+            "راجعت مادة الرصد السابقة.",
+            "حددت العامل المفجر أو الموقف المنشط الأساسي.",
+            "فصلت بين الفكرة والمشاعر والسلوك.",
+            "طلبت رصدًا أدق للجلسة القادمة."
+          ],
           homework: "الاستمرار في الرصد بدقة أفضل.",
           output: "صورة أوضح للمثيرات والأنماط المتكررة والمشاعر المصاحبة."
         },
@@ -829,6 +944,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "الجلسة الثالثة",
           purpose: "شرح أخطاء التفكير ومساعدة العميل على استخراجها من أمثلته الواقعية.",
           tools: ["قائمة أخطاء التفكير", "جدول رصد بخانة أخطاء التفكير"],
+          tasks: [
+            "تقديم أخطاء التفكير الأقرب للحالة باستخدام أمثلة المتدرب نفسه.",
+            "ربط كل تسمية بفكرة حقيقية تم رصدها.",
+            "تصحيح التسمية دون تحويل الجلسة إلى حفظ نظري."
+          ],
+          milestones: [
+            "تم ربط خطأ تفكير واحد على الأقل بمثال واقعي.",
+            "أصبح الفرق أوضح بين التسمية والدليل.",
+            "دخلت خانة أخطاء التفكير في الرصد."
+          ],
+          checklistItems: [
+            "شرحت خطأ التفكير المناسب بلغة بسيطة.",
+            "ربطت خطأ التفكير بمثال حقيقي من الجلسة.",
+            "أضفت خانة أخطاء التفكير إلى الرصد.",
+            "حددت واجبًا للاستمرار في تسمية الأخطاء."
+          ],
           homework: "استكمال الجدول مع تحديد أخطاء التفكير المحتملة.",
           output: "أخطاء تفكير مسماة ومرتبطة بمواقف حقيقية."
         },
@@ -836,6 +967,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "الجلسة الرابعة",
           purpose: "الانتقال من الأفكار التلقائية إلى المعتقدات الأعمق وبناء دافعية التغيير.",
           tools: ["السهم الهابط", "استكشاف المعتقدات"],
+          tasks: [
+            "البدء من فكرة تلقائية واضحة بدل موضوع عام.",
+            "استخدام أسئلة موجهة للوصول إلى المعنى الأعمق أو القاعدة الأعمق.",
+            "ربط هذا العمل بسبب أهمية التغيير الآن."
+          ],
+          milestones: [
+            "ظهرت فرضية واحدة على الأقل عن معتقد أعمق.",
+            "أصبح الربط أوضح بين الفكرة السطحية والمعنى الأعمق.",
+            "أصبح من الأسهل تسمية دافعية التغيير."
+          ],
+          checklistItems: [
+            "اخترت فكرة تلقائية واحدة كنقطة بداية.",
+            "استخدمت أسئلة موجهة لاستكشاف المعنى الأعمق.",
+            "أبقيت المعتقدات الأعمق في صيغة فرضيات عاملة.",
+            "ربطت الجلسة بكلفة استمرار المشكلة."
+          ],
           homework: "التفكير في كلفة المشكلة وما الذي يجعل التغيير مهمًا.",
           output: "فرضيات أولية عن المعتقدات الوسيطة والجذرية."
         },
@@ -843,6 +990,22 @@ const content: Record<AppLanguage, HubContent> = {
           session: "الجلسة الخامسة",
           purpose: "جمع الأنماط المتكررة ووضع بداية الخطة العلاجية مع العميل.",
           tools: ["تلخيص الأنماط", "الخطة العلاجية"],
+          tasks: [
+            "تلخيص النمط المتكرر عبر الجلسات السابقة.",
+            "تسمية المشكلات ذات الأولوية بدل معالجة كل شيء دفعة واحدة.",
+            "تحويل هذا النمط إلى اتجاه علاجي أولي."
+          ],
+          milestones: [
+            "ظهرت صياغة عاملة أولية.",
+            "تم ترتيب المشكلات حسب الأولوية.",
+            "أصبحت نقطة البداية العلاجية متفقًا عليها."
+          ],
+          checklistItems: [
+            "لخصت النمط المتكرر عبر الجلسات.",
+            "سمّيت المشكلات ذات الأولوية بوضوح.",
+            "اتفقنا على اتجاه علاجي أولي.",
+            "حددت أول مهمة علاجية مستهدفة."
+          ],
           homework: "بدء أول مهمة علاجية مستهدفة.",
           output: "صياغة عاملة، ومشكلات ذات أولوية، ونقطة بداية واضحة للعلاج."
         }
