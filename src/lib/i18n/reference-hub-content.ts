@@ -44,6 +44,35 @@ type ThinkingLevel = {
   example: string;
 };
 
+type DownwardArrowGuide = {
+  title: string;
+  intro: string;
+  prerequisitesTitle: string;
+  prerequisites: string[];
+  startHereTitle: string;
+  startHere: string[];
+  questionChainTitle: string;
+  questionChainExample: {
+    situation: string;
+    automaticThought: string;
+    questions: string[];
+    intermediateBelief: string;
+    coreBelief: string;
+  };
+  comparisonTitle: string;
+  comparison: Array<{
+    title: string;
+    when: string;
+    output: string;
+  }>;
+  readinessTitle: string;
+  readinessChecks: string[];
+  failureModesTitle: string;
+  commonFailureModes: string[];
+  readinessOutcomeReady: string;
+  readinessOutcomeNotReady: string;
+};
+
 type Distortion = {
   name: string;
   definition: string;
@@ -141,6 +170,7 @@ type HubContent = {
     title: string;
     items: ThinkingLevel[];
   };
+  downwardArrowGuide: DownwardArrowGuide;
   distortions: {
     title: string;
     intro: string;
@@ -634,6 +664,62 @@ const content: Record<AppLanguage, HubContent> = {
           example: "I am not capable."
         }
       ]
+    },
+    downwardArrowGuide: {
+      title: "How do I reach downward arrow?",
+      intro:
+        "This is the practical bridge between understanding downward arrow and actually using it. The goal is not to guess deep beliefs early. The goal is to move step by step from one clear automatic thought.",
+      prerequisitesTitle: "Before you start",
+      prerequisites: [
+        "You need one automatic thought in a clear sentence.",
+        "You need one real situation, not a broad complaint or life summary.",
+        "You should already be able to separate thought, emotion, and behavior."
+      ],
+      startHereTitle: "Start here",
+      startHere: [
+        "Take one automatic thought from monitoring or a thought record.",
+        "Ask what that thought would mean if it were true.",
+        "Let each next question build on the answer before it."
+      ],
+      questionChainTitle: "Worked example: question chain",
+      questionChainExample: {
+        situation: "The trainee is anxious about speaking in a team meeting.",
+        automaticThought: "If I speak and hesitate, they will think I am incompetent.",
+        questions: [
+          "If they thought that, what would that mean about you?",
+          "If it meant you were incompetent, why would that feel so dangerous?",
+          "If others saw you that way, what would that say about you as a person?"
+        ],
+        intermediateBelief: "If I do not appear strong and precise, it is safer to stay silent.",
+        coreBelief: "I am not good enough."
+      },
+      comparisonTitle: "Thought record or downward arrow?",
+      comparison: [
+        {
+          title: "Thought record",
+          when: "Use it when the automatic thought still needs clarification, evidence review, or a more balanced response.",
+          output: "A clearer thought and a tested alternative response."
+        },
+        {
+          title: "Downward arrow",
+          when: "Use it when the automatic thought is already clear and seems to point to a deeper rule or meaning.",
+          output: "A hypothesis about an intermediate belief or core belief."
+        }
+      ],
+      readinessTitle: "Mini-check",
+      readinessChecks: [
+        "Can I name one automatic thought in one sentence?",
+        "Do I have one concrete example that actually happened?",
+        "Am I tracing one thought deeper instead of collecting many different thoughts?"
+      ],
+      failureModesTitle: "Stop and go back if...",
+      commonFailureModes: [
+        "You are still naming an emotion instead of an automatic thought.",
+        "You are repeating broad statements like 'I always fail' without one concrete situation.",
+        "You are trying to guess a deep belief before the surface thought is clear."
+      ],
+      readinessOutcomeReady: "If your answers are mostly yes, you are probably ready to try downward arrow.",
+      readinessOutcomeNotReady: "If your answers are mostly no, go back to monitoring or a thought record first."
     },
     distortions: {
       title: "Cognitive Distortions Reference",
@@ -1419,6 +1505,62 @@ const content: Record<AppLanguage, HubContent> = {
           example: "أنا غير كفء."
         }
       ]
+    },
+    downwardArrowGuide: {
+      title: "كيف أصل إلى السهم الهابط؟",
+      intro:
+        "هذا هو الجسر العملي بين فهم السهم الهابط نظريًا وبين استخدامه فعليًا. الهدف ليس تخمين معتقدات عميقة مبكرًا، بل التحرك خطوة بخطوة من فكرة تلقائية واحدة واضحة.",
+      prerequisitesTitle: "قبل أن تبدأ",
+      prerequisites: [
+        "يجب أن تكون لديك فكرة تلقائية واحدة في جملة واضحة.",
+        "يجب أن يكون لديك موقف حقيقي واحد، لا شكوى عامة أو قصة واسعة.",
+        "يجب أن يكون الفرق واضحًا لديك بين الفكرة والمشاعر والسلوك."
+      ],
+      startHereTitle: "ابدأ من هنا",
+      startHere: [
+        "خذ فكرة تلقائية واحدة من الرصد أو من سجل الأفكار.",
+        "اسأل: إذا كانت هذه الفكرة صحيحة، ماذا يعني ذلك؟",
+        "اجعل كل سؤال جديد يبني على الإجابة السابقة."
+      ],
+      questionChainTitle: "مثال تطبيقي: سلسلة أسئلة",
+      questionChainExample: {
+        situation: "المتدرب يشعر بقلق من الكلام في اجتماع الفريق.",
+        automaticThought: "إذا تكلمت وترددت فسيظنون أنني غير كفء.",
+        questions: [
+          "إذا ظنوا ذلك، ماذا يعني هذا عنك؟",
+          "إذا كان يعني أنك غير كفء، لماذا هذا مخيف جدًا بالنسبة لك؟",
+          "إذا رآك الآخرون بهذه الصورة، ماذا يقول ذلك عنك كشخص؟"
+        ],
+        intermediateBelief: "إذا لم أبدُ قويًا ودقيقًا فمن الأفضل أن أصمت.",
+        coreBelief: "أنا لست جيدًا بما يكفي."
+      },
+      comparisonTitle: "سجل الأفكار أم السهم الهابط؟",
+      comparison: [
+        {
+          title: "سجل الأفكار",
+          when: "استخدمه عندما تكون الفكرة التلقائية نفسها ما زالت تحتاج توضيحًا أو مراجعة أدلة أو ردًا أكثر توازنًا.",
+          output: "فكرة أوضح وردّ بديل تم فحصه."
+        },
+        {
+          title: "السهم الهابط",
+          when: "استخدمه عندما تكون الفكرة التلقائية واضحة أصلًا وتشير إلى قاعدة أو معنى أعمق.",
+          output: "فرضية عن معتقد وسيط أو معتقد جوهري."
+        }
+      ],
+      readinessTitle: "فحص سريع",
+      readinessChecks: [
+        "هل أستطيع تسمية فكرة تلقائية واحدة في جملة واحدة؟",
+        "هل عندي مثال واحد محدد حدث فعلًا؟",
+        "هل أنا أتتبع فكرة واحدة إلى العمق بدل جمع أفكار كثيرة معًا؟"
+      ],
+      failureModesTitle: "توقف وارجع إذا...",
+      commonFailureModes: [
+        "ما زلت أسمي شعورًا بدل فكرة تلقائية.",
+        "ما زلت أكرر جملًا عامة مثل: أنا دائمًا أفشل، من دون موقف محدد.",
+        "أحاول تخمين معتقد عميق قبل أن تتضح الفكرة السطحية."
+      ],
+      readinessOutcomeReady: "إذا كانت معظم إجاباتك نعم، فأنت غالبًا جاهز لتجربة السهم الهابط.",
+      readinessOutcomeNotReady: "إذا كانت معظم إجاباتك لا، فارجع أولًا إلى الرصد أو سجل الأفكار."
     },
     distortions: {
       title: "مرجع التشوهات المعرفية",

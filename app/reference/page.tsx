@@ -672,6 +672,88 @@ export default function ReferenceHubPage() {
               ))}
             </div>
           </div>
+          <div className="panel stack">
+            <h3>{content.downwardArrowGuide.title}</h3>
+            <p className="muted">{content.downwardArrowGuide.intro}</p>
+
+            <div className="reference-card-grid">
+              <article className="reference-card">
+                <strong>{content.downwardArrowGuide.prerequisitesTitle}</strong>
+                <div className="list">
+                  {content.downwardArrowGuide.prerequisites.map((item) => (
+                    <div key={item} className="list-item reference-check">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="reference-card">
+                <strong>{content.downwardArrowGuide.startHereTitle}</strong>
+                <div className="list">
+                  {content.downwardArrowGuide.startHere.map((item) => (
+                    <div key={item} className="list-item reference-check">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="reference-card-grid">
+              {content.downwardArrowGuide.comparison.map((item) => (
+                <article key={item.title} className="reference-card">
+                  <strong>{item.title}</strong>
+                  <p><strong>{language === "ar" ? "متى تستخدمه؟" : "When to use it:"}</strong> {item.when}</p>
+                  <p><strong>{language === "ar" ? "ماذا يخرج منه؟" : "What it should produce:"}</strong> {item.output}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="detail-callout">
+              <strong>{content.downwardArrowGuide.questionChainTitle}</strong>
+              <div className="stack">
+                <p><strong>{language === "ar" ? "الموقف:" : "Situation:"}</strong> {content.downwardArrowGuide.questionChainExample.situation}</p>
+                <p><strong>{language === "ar" ? "الفكرة التلقائية:" : "Automatic thought:"}</strong> {content.downwardArrowGuide.questionChainExample.automaticThought}</p>
+                <div className="list">
+                  {content.downwardArrowGuide.questionChainExample.questions.map((question, index) => (
+                    <div key={question} className="list-item">
+                      <strong>{language === "ar" ? `سؤال ${index + 1}` : `Question ${index + 1}`}</strong>
+                      <div>{question}</div>
+                    </div>
+                  ))}
+                </div>
+                <p><strong>{language === "ar" ? "المعتقد الوسيط المحتمل:" : "Possible intermediate belief:"}</strong> {content.downwardArrowGuide.questionChainExample.intermediateBelief}</p>
+                <p><strong>{language === "ar" ? "المعتقد الجوهري المحتمل:" : "Possible core belief:"}</strong> {content.downwardArrowGuide.questionChainExample.coreBelief}</p>
+              </div>
+            </div>
+
+            <div className="reference-card-grid">
+              <article className="reference-card">
+                <strong>{content.downwardArrowGuide.readinessTitle}</strong>
+                <div className="list">
+                  {content.downwardArrowGuide.readinessChecks.map((item) => (
+                    <div key={item} className="list-item reference-check">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+                <p className="muted">{content.downwardArrowGuide.readinessOutcomeReady}</p>
+              </article>
+
+              <article className="reference-card">
+                <strong>{content.downwardArrowGuide.failureModesTitle}</strong>
+                <div className="list">
+                  {content.downwardArrowGuide.commonFailureModes.map((item) => (
+                    <div key={item} className="list-item reference-check">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+                <p className="muted">{content.downwardArrowGuide.readinessOutcomeNotReady}</p>
+              </article>
+            </div>
+          </div>
           <div className="reference-browser">
             <aside className="reference-browser-list">
               {content.distortions.items.map((item, index) => (
