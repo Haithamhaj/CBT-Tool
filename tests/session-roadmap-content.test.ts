@@ -12,6 +12,10 @@ describe("session roadmap content", () => {
         expect(session.tasks.length).toBeGreaterThan(0);
         expect(session.milestones.length).toBeGreaterThan(0);
         expect(session.checklistItems.length).toBeGreaterThan(0);
+        expect(session.dynamicFlow.whatToDo.length).toBeGreaterThan(0);
+        expect(session.dynamicFlow.therapeuticBenefit.length).toBeGreaterThan(0);
+        expect(session.dynamicFlow.whatNext.length).toBeGreaterThan(0);
+        expect(session.dynamicFlow.doNotAdvanceIf.length).toBeGreaterThan(0);
         expect(session.tools.length).toBeGreaterThan(0);
         expect(session.homework.length).toBeGreaterThan(0);
         expect(session.output.length).toBeGreaterThan(0);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { SessionMapItem } from "../../lib/i18n/reference-hub-content";
 import type { RoadmapContent } from "../../lib/i18n/session-roadmap-content";
 import {
@@ -23,6 +24,9 @@ export function SessionRoadmapView({
   onToggle,
   pdfHref
 }: SessionRoadmapViewProps) {
+  const [selectedSessionIndex, setSelectedSessionIndex] = useState(0);
+  const selectedSession = sessions[selectedSessionIndex] ?? sessions[0];
+
   return (
     <div className="page lecture-page session-roadmap-page stack">
       <section className="panel session-roadmap-hero stack">
@@ -41,26 +45,109 @@ export function SessionRoadmapView({
         </div>
 
         <div className="callout callout-advisory">{labels.savedHint}</div>
-        <div className="session-roadmap-timeline" aria-label={labels.timelineTitle}>
+      </section>
+
+      <section className="panel stack">
+        <div className="stack">
+          <span className="section-label">{labels.timelineTitle}</span>
+          <h2>{labels.flowTitle}</h2>
+          <p className="muted">{labels.flowIntro}</p>
+        </div>
+
+        <div className="session-roadmap-flow" aria-label={labels.timelineTitle}>
           {sessions.map((session, index) => {
             const values = checklistState[session.session] ?? [];
             const status = deriveSessionStatus(values);
             const summary = summarizeChecklist(values);
+            const isActive = selectedSessionIndex === index;
 
             return (
-              <article key={session.session} className={`session-roadmap-timeline-card status-${status}`}>
-                <div className="session-roadmap-stage-number">{index + 1}</div>
-                <div className="stack">
+              <button
+                key={session.session}
+                type="button"
+                className={isActive ? `session-roadmap-flow-node active status-${status}` : `session-roadmap-flow-node status-${status}`}
+                onClick={() => setSelectedSessionIndex(index)}
+                aria-pressed={isActive}
+              >
+                <span className="session-roadmap-stage-number">{index + 1}</span>
+                <span className="stack">
                   <strong>{session.session}</strong>
                   <span className="muted">{labels.statusLabels[status]}</span>
                   <span className="badge subtle">
                     {summary.completed}/{summary.total}
                   </span>
-                </div>
-              </article>
+                </span>
+              </button>
             );
           })}
         </div>
+
+        <article className="session-roadmap-focus-card">
+          <div className="row" style={{ justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
+            <div className="stack">
+              <strong>{selectedSession.session}</strong>
+              <p>{selectedSession.purpose}</p>
+            </div>
+            <span className="badge">{selectedSession.tools.join(" • ")}</span>
+          </div>
+
+          <div className="session-roadmap-focus-grid">
+            <section className="reference-card session-roadmap-detail-card">
+              <strong>{labels.whatToDoTitle}</strong>
+              <div className="list">
+                {selectedSession.dynamicFlow.whatToDo.map((item) => (
+                  <div key={item} className="list-item">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="reference-card session-roadmap-detail-card">
+              <strong>{labels.therapeuticBenefitTitle}</strong>
+              <div className="list">
+                {selectedSession.dynamicFlow.therapeuticBenefit.map((item) => (
+                  <div key={item} className="list-item">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="reference-card session-roadmap-detail-card">
+              <strong>{labels.whatNextTitle}</strong>
+              <div className="list">
+                {selectedSession.dynamicFlow.whatNext.map((item) => (
+                  <div key={item} className="list-item">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="reference-card session-roadmap-detail-card">
+              <strong>{labels.doNotAdvanceTitle}</strong>
+              <div className="list">
+                {selectedSession.dynamicFlow.doNotAdvanceIf.map((item) => (
+                  <div key={item} className="list-item">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <div className="session-roadmap-guidance-grid">
+            <div className="callout callout-official">
+              <strong>{labels.nextStepLabel}:</strong>
+              <p>{selectedSession.dynamicFlow.whatNext.join(" • ")}</p>
+            </div>
+            <div className="callout callout-advisory">
+              <strong>{labels.warningLabel}:</strong>
+              <p>{selectedSession.dynamicFlow.doNotAdvanceIf.join(" • ")}</p>
+            </div>
+          </div>
+        </article>
       </section>
 
       <section className="panel stack">

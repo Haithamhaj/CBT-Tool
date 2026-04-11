@@ -12,6 +12,12 @@ export type SessionMapItem = {
   tasks: string[];
   milestones: string[];
   checklistItems: string[];
+  dynamicFlow: {
+    whatToDo: string[];
+    therapeuticBenefit: string[];
+    whatNext: string[];
+    doNotAdvanceIf: string[];
+  };
   homework: string;
   output: string;
 };
@@ -227,6 +233,26 @@ const content: Record<AppLanguage, HubContent> = {
             "I selected one recent situation to monitor.",
             "I assigned the first observation task."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "Clarify the present complaint.",
+              "Explain the CBT frame in simple language.",
+              "Start monitoring instead of staying at a broad story level."
+            ],
+            therapeuticBenefit: [
+              "The problem shifts from a vague impression to workable material.",
+              "Real examples start replacing prediction and general talk."
+            ],
+            whatNext: [
+              "Review the monitoring.",
+              "Identify the trigger and the repeated pattern around it."
+            ],
+            doNotAdvanceIf: [
+              "The complaint is still vague.",
+              "No clear situation has been captured.",
+              "Monitoring has not actually started."
+            ]
+          },
           homework: "Start the observation table after relevant situations.",
           output: "Clear current complaint, early timeline, and first monitoring task."
         },
@@ -250,6 +276,25 @@ const content: Record<AppLanguage, HubContent> = {
             "I separated thought, emotion, and behavior.",
             "I asked for more detailed monitoring next."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "Review the monitored examples.",
+              "Identify the triggering or activating situation.",
+              "Separate thought, feeling, and behavior."
+            ],
+            therapeuticBenefit: [
+              "The trainee sees how the problem actually works in real situations.",
+              "The pattern becomes clearer than a list of unrelated events."
+            ],
+            whatNext: [
+              "Start naming cognitive distortions inside the same examples."
+            ],
+            doNotAdvanceIf: [
+              "The material is still broad.",
+              "Thought and feeling are still mixed together.",
+              "No repeated pattern is visible yet."
+            ]
+          },
           homework: "Continue monitoring with better detail.",
           output: "Better map of triggers, repeated reactions, and emotional patterns."
         },
@@ -273,6 +318,25 @@ const content: Record<AppLanguage, HubContent> = {
             "I added the thinking-error column to the record.",
             "I assigned homework to keep labeling distortions."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "Explain the relevant cognitive distortions.",
+              "Link them to real monitored examples.",
+              "Help the trainee notice them independently."
+            ],
+            therapeuticBenefit: [
+              "The problem becomes more precise and easier to understand.",
+              "The trainee sees how interpretation errors maintain distress."
+            ],
+            whatNext: [
+              "Move from the automatic thought toward deeper meaning and beliefs."
+            ],
+            doNotAdvanceIf: [
+              "The trainee is memorizing labels only.",
+              "There are no real examples linked to the distortion.",
+              "The automatic thought itself is still unclear."
+            ]
+          },
           homework: "Complete the table and mark likely distortions.",
           output: "Named thinking errors tied to real examples."
         },
@@ -296,6 +360,27 @@ const content: Record<AppLanguage, HubContent> = {
             "I kept deeper beliefs as working hypotheses.",
             "I linked the session to the cost of staying the same."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "Start from one clear automatic thought.",
+              "Use downward arrow or guided questions.",
+              "Reach the deeper rules or beliefs underneath."
+            ],
+            therapeuticBenefit: [
+              "The trainee understands why the same pattern keeps repeating.",
+              "Current behavior becomes linked to its deeper cognitive roots."
+            ],
+            whatNext: [
+              "Summarize the full pattern.",
+              "Set priorities.",
+              "Start building the treatment plan."
+            ],
+            doNotAdvanceIf: [
+              "There is no clear automatic thought yet.",
+              "Belief talk is still pure guesswork.",
+              "The material is too thin to support a reasonable hypothesis."
+            ]
+          },
           homework: "Reflect on what the problem costs and what change would protect.",
           output: "Early intermediate/core belief hypotheses."
         },
@@ -319,6 +404,26 @@ const content: Record<AppLanguage, HubContent> = {
             "I agreed an initial treatment direction.",
             "I assigned the first targeted treatment task."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "Summarize the repeated pattern.",
+              "Identify the priority problem list.",
+              "Turn the formulation into treatment goals and first steps."
+            ],
+            therapeuticBenefit: [
+              "The formulation becomes clinically useful instead of theoretical.",
+              "The trainee can decide where treatment starts and which tool fits first."
+            ],
+            whatNext: [
+              "Begin the first fitting therapeutic intervention.",
+              "Set the near-term goal and first homework."
+            ],
+            doNotAdvanceIf: [
+              "The priorities are still unclear.",
+              "The treatment plan is not tied back to the formulation.",
+              "The chosen tool does not serve the first goal."
+            ]
+          },
           homework: "Begin the first targeted treatment task.",
           output: "Working formulation, priority problems, and treatment start point."
         }
@@ -914,6 +1019,26 @@ const content: Record<AppLanguage, HubContent> = {
             "حددت موقفًا حديثًا واحدًا للرصد.",
             "حددت أول واجب للرصد."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "أوضح الشكوى الحالية.",
+              "أشرح إطار CBT بشكل بسيط.",
+              "أبدأ الرصد بدل الكلام العام."
+            ],
+            therapeuticBenefit: [
+              "أحول المشكلة من انطباع عام إلى مادة قابلة للفهم.",
+              "أبدأ جمع أمثلة حقيقية بدل التوقعات."
+            ],
+            whatNext: [
+              "أراجع الرصد.",
+              "أحدد الموقف المفجر والأنماط المتكررة."
+            ],
+            doNotAdvanceIf: [
+              "الشكوى ما زالت غامضة.",
+              "لا يوجد موقف واضح.",
+              "الرصد لم يبدأ فعلًا."
+            ]
+          },
           homework: "بدء جدول الرصد بعد المواقف المهمة.",
           output: "شكوى حالية واضحة، وبداية صورة زمنية للمشكلة، وأول واجب للرصد."
         },
@@ -937,6 +1062,25 @@ const content: Record<AppLanguage, HubContent> = {
             "فصلت بين الفكرة والمشاعر والسلوك.",
             "طلبت رصدًا أدق للجلسة القادمة."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "أراجع ما تم رصده.",
+              "أحدد المثيرات أو المواقف المفجرة.",
+              "أفصل بين الفكرة والمشاعر والسلوك."
+            ],
+            therapeuticBenefit: [
+              "أفهم كيف تعمل المشكلة في الواقع.",
+              "أرى النمط بدل رؤية أحداث متفرقة."
+            ],
+            whatNext: [
+              "أبدأ تسمية أخطاء التفكير داخل الأمثلة نفسها."
+            ],
+            doNotAdvanceIf: [
+              "ما زالت المادة عامة.",
+              "لا أستطيع التفريق بين الفكرة والشعور.",
+              "لا يوجد نمط متكرر واضح."
+            ]
+          },
           homework: "الاستمرار في الرصد بدقة أفضل.",
           output: "صورة أوضح للمثيرات والأنماط المتكررة والمشاعر المصاحبة."
         },
@@ -960,6 +1104,25 @@ const content: Record<AppLanguage, HubContent> = {
             "أضفت خانة أخطاء التفكير إلى الرصد.",
             "حددت واجبًا للاستمرار في تسمية الأخطاء."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "أشرح أخطاء التفكير المرتبطة بالحالة.",
+              "أربطها بأمثلة حقيقية من الرصد.",
+              "أساعد المتدرب على ملاحظتها بنفسه."
+            ],
+            therapeuticBenefit: [
+              "يصبح فهم المشكلة أدق.",
+              "نرى كيف يساهم التفسير الخاطئ في استمرار المعاناة."
+            ],
+            whatNext: [
+              "أنتقل من الفكرة التلقائية إلى المعنى الأعمق والمعتقدات."
+            ],
+            doNotAdvanceIf: [
+              "المتدرب يحفظ أسماء الأخطاء فقط.",
+              "لا توجد أمثلة حقيقية مرتبطة بالتسمية.",
+              "ما زالت الفكرة التلقائية نفسها غير واضحة."
+            ]
+          },
           homework: "استكمال الجدول مع تحديد أخطاء التفكير المحتملة.",
           output: "أخطاء تفكير مسماة ومرتبطة بمواقف حقيقية."
         },
@@ -983,6 +1146,27 @@ const content: Record<AppLanguage, HubContent> = {
             "أبقيت المعتقدات الأعمق في صيغة فرضيات عاملة.",
             "ربطت الجلسة بكلفة استمرار المشكلة."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "أبدأ من فكرة تلقائية واضحة.",
+              "أستخدم السهم الهابط أو أسئلة موجهة.",
+              "أصل إلى القواعد أو المعتقدات الأعمق."
+            ],
+            therapeuticBenefit: [
+              "أفهم لماذا يتكرر نفس النمط.",
+              "أربط السلوك الحالي بجذوره المعرفية."
+            ],
+            whatNext: [
+              "ألخص النمط الكامل.",
+              "أحدد الأولويات.",
+              "أبدأ بناء الخطة العلاجية."
+            ],
+            doNotAdvanceIf: [
+              "لا توجد فكرة تلقائية واضحة أصلًا.",
+              "الحديث عن المعتقدات ما زال مجرد تخمين.",
+              "المادة لا تكفي لبناء فرضية معقولة."
+            ]
+          },
           homework: "التفكير في كلفة المشكلة وما الذي يجعل التغيير مهمًا.",
           output: "فرضيات أولية عن المعتقدات الوسيطة والجذرية."
         },
@@ -1006,6 +1190,26 @@ const content: Record<AppLanguage, HubContent> = {
             "اتفقنا على اتجاه علاجي أولي.",
             "حددت أول مهمة علاجية مستهدفة."
           ],
+          dynamicFlow: {
+            whatToDo: [
+              "ألخص النمط المتكرر.",
+              "أحدد قائمة المشكلات ذات الأولوية.",
+              "أحول الصياغة إلى أهداف وخطوات علاجية."
+            ],
+            therapeuticBenefit: [
+              "تصبح الصياغة مفيدة عمليًا لا مجرد فهم نظري.",
+              "أحدد من أين يبدأ العلاج وبأي أداة."
+            ],
+            whatNext: [
+              "أبدأ أول تدخل علاجي مناسب.",
+              "أحدد الهدف القريب والواجب الأول."
+            ],
+            doNotAdvanceIf: [
+              "لا توجد أولويات واضحة.",
+              "الخطة العلاجية لا ترتبط بالصياغة.",
+              "الأداة المختارة لا تخدم الهدف الأول."
+            ]
+          },
           homework: "بدء أول مهمة علاجية مستهدفة.",
           output: "صياغة عاملة، ومشكلات ذات أولوية، ونقطة بداية واضحة للعلاج."
         }

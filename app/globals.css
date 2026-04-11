@@ -1235,13 +1235,13 @@ html[dir="rtl"] .reference-quickstart {
   gap: 16px;
 }
 
-.session-roadmap-timeline {
+.session-roadmap-flow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.session-roadmap-timeline-card {
+.session-roadmap-flow-node {
   display: grid;
   grid-template-columns: 48px 1fr;
   gap: 12px;
@@ -1249,6 +1249,39 @@ html[dir="rtl"] .reference-quickstart {
   border: 1px solid #d8dee4;
   border-radius: 16px;
   background: #ffffff;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.session-roadmap-flow-node:hover {
+  transform: translateY(-1px);
+}
+
+.session-roadmap-flow-node.active {
+  border-color: #8db0d4;
+  box-shadow: inset 0 0 0 1px rgba(61, 118, 176, 0.16), 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.session-roadmap-focus-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #d8dee4;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f9fbff 0%, #ffffff 100%);
+}
+
+.session-roadmap-focus-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.session-roadmap-guidance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .session-roadmap-stage-number {
@@ -1269,13 +1302,13 @@ html[dir="rtl"] .reference-quickstart {
 }
 
 .session-roadmap-card.status-inProgress,
-.session-roadmap-timeline-card.status-inProgress {
+.session-roadmap-flow-node.status-inProgress {
   border-color: #cfd9a9;
   box-shadow: inset 0 0 0 1px rgba(191, 164, 88, 0.22);
 }
 
 .session-roadmap-card.status-completed,
-.session-roadmap-timeline-card.status-completed {
+.session-roadmap-flow-node.status-completed {
   border-color: #a7c4ab;
   box-shadow: inset 0 0 0 1px rgba(61, 118, 76, 0.18);
 }
@@ -1348,7 +1381,9 @@ html[dir="rtl"] .reference-quickstart {
   }
 
   .session-roadmap-detail-grid,
-  .session-roadmap-meta-grid {
+  .session-roadmap-meta-grid,
+  .session-roadmap-focus-grid,
+  .session-roadmap-guidance-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1356,7 +1391,11 @@ html[dir="rtl"] .reference-quickstart {
     flex-direction: column;
   }
 
-  .session-roadmap-timeline-card {
+  .session-roadmap-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .session-roadmap-flow-node {
     grid-template-columns: 40px 1fr;
   }
 
@@ -1408,12 +1447,12 @@ html[dir="rtl"] .reference-quickstart {
     break-inside: auto;
   }
 
-  .session-roadmap-timeline {
+  .session-roadmap-flow {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .session-roadmap-card,
-  .session-roadmap-timeline-card {
+  .session-roadmap-flow-node {
     box-shadow: none;
   }
 

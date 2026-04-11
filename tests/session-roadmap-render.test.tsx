@@ -16,8 +16,13 @@ describe("SessionRoadmapView", () => {
     );
 
     expect(markup).toContain("لوحة الجلسات الخمس في CBT");
+    expect(markup).toContain("المسار التفاعلي للجلسات");
     expect(markup).toContain("الجلسة الأولى");
     expect(markup).toContain("الجلسة الخامسة");
+    expect(markup).toContain("ماذا أفعل هنا؟");
+    expect(markup).toContain("ما الفائدة العلاجية؟");
+    expect(markup).toContain("ماذا بعد؟");
+    expect(markup).toContain("لا تنتقل إذا...");
     expect(markup).toContain("checked");
     expect(markup).toContain("2/4");
     expect(markup).toContain("/reference/5-sessions/pdf");
