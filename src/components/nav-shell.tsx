@@ -13,6 +13,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/reference", label: t(language, "navReferenceHub") },
+    { href: "/disorders", label: t(language, "navDisorders") },
     { href: "/lectures", label: t(language, "navLectures") },
     ...(currentUser.role === "facilitator" ? [{ href: "/admin", label: t(language, "navAdmin") }] : [])
   ];
@@ -44,7 +45,7 @@ export function NavShell({ children }: { children: React.ReactNode }) {
             <Link
               key={item.href}
               href={item.href}
-              className={pathname === item.href ? "nav-link active" : "nav-link"}
+              className={pathname === item.href || pathname.startsWith(`${item.href}/`) ? "nav-link active" : "nav-link"}
             >
               {item.label}
             </Link>

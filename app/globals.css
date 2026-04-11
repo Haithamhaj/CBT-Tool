@@ -1022,6 +1022,48 @@ html[dir="rtl"] .reference-quickstart {
   max-width: 1040px;
 }
 
+.disorder-page {
+  gap: 24px;
+}
+
+.disorder-section {
+  gap: 18px;
+}
+
+.disorder-check {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.disorder-option {
+  text-align: start;
+  border: 1px solid #d1dae3;
+}
+
+.disorder-option.active {
+  background: #16202a;
+  color: #ffffff;
+}
+
+.disorder-mini-note {
+  flex: 1 1 280px;
+}
+
+.disorder-reference-page {
+  max-width: 1200px;
+}
+
+.disorder-reference-frame {
+  padding: 0;
+  overflow: hidden;
+}
+
+.disorder-reference-iframe {
+  width: 100%;
+  min-height: 80vh;
+  border: 0;
+  display: block;
+}
+
 .lecture-hero,
 .lecture-header {
   background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
